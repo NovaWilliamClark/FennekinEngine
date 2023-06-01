@@ -4,11 +4,15 @@
 #define PLATFORM_WINDOWS
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#include <string>
+#define __FILENAME__ (strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 : __FILE__)
 #undef ERROR
 #undef CRITICAL
 #elif defined(__unix__) || defined(__APPLE__)
 #define PLATFORM_UNIX
 #include <unistd.h>
+#include <string>
+#define __FILENAME__ (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
 #else
 #error "Unknown platform"
 #endif
