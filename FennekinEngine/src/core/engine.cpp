@@ -18,9 +18,11 @@ void Engine::run() {
     while (!m_window.shouldClose()) {
         ++iteration;
         m_timer.startTimer();
-
+        m_window.bind();
 
         LOG_INFO("Frametime: {0}ns", m_timer.endTimer<Time::Nanoseconds>());
-        m_timer.update(); 
+        m_timer.update();
+
+        m_window.swapBuffers();
     }
 }

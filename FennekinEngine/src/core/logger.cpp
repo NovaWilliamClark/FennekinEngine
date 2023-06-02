@@ -78,14 +78,8 @@ void Logger::handleLogMessage(const LogMessage& t_msg)
 {
     std::lock_guard lock(m_logMutex);
 
-    const auto now = std::chrono::system_clock::now();
-    const std::time_t tt = std::chrono::system_clock::to_time_t(now);
-    std::tm tm{};
-    localtime_s(&tm, &tt);
-
     std::ostringstream oss;
-    oss << std::put_time(&tm, "%d-%m-%Y %H:%M:%S")
-        << " [" << toString(t_msg.level) << "] "
+    oss << " [" << toString(t_msg.level) << "] "
         << " File: " << t_msg.filename
         << " Line: " << t_msg.line
         << " - "
@@ -134,6 +128,7 @@ void Logger::writeLogToFile(const std::string& t_logStr)
     std::ofstream logFile(m_logFileName, std::ios::app);
     if (logFile) {
         logFile << t_logStr;
+        logFile.close();
     }
 }
 

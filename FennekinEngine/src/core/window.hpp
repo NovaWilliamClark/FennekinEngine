@@ -12,7 +12,7 @@ public:
 
  void bind();
 
- void swapBuffer() const;
+ void swapBuffers() const;
  bool shouldClose() const;
  GLFWwindow* getNativeWindow() const;
 
