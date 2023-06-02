@@ -65,8 +65,9 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <AdditionalIncludeDirectories>$(ProjectDir)\lib\glew\include;$(ProjectDir)\lib\glfw\include;$(ProjectDir)\lib;</AdditionalIncludeDirectories>
-      <TreatWarningAsError>false</TreatWarningAsError>
+      <TreatWarningAsError>true</TreatWarningAsError>
       <FloatingPointModel>Fast</FloatingPointModel>
+      <DisableSpecificWarnings>4005</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -87,8 +88,9 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <AdditionalIncludeDirectories>$(ProjectDir)\lib\glew\include;$(ProjectDir)\lib\glfw\include;$(ProjectDir)\lib;</AdditionalIncludeDirectories>
-      <TreatWarningAsError>false</TreatWarningAsError>
+      <TreatWarningAsError>true</TreatWarningAsError>
       <FloatingPointModel>Fast</FloatingPointModel>
+      <DisableSpecificWarnings>4005</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -100,14 +102,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\core\engine.cpp" />
     <ClCompile Include="src\core\logger.cpp" />
-    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\core\time.cpp" />
     <ClCompile Include="src\core\window.cpp" />
+    <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\core\engine.hpp" />
     <ClInclude Include="src\core\logger.hpp" />
-    <ClInclude Include="src\platform\platform.hpp" />
+    <ClInclude Include="src\core\time.hpp" />
     <ClInclude Include="src\core\window.hpp" />
+    <ClInclude Include="src\io\color.hpp" />
+    <ClInclude Include="src\platform\platform.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

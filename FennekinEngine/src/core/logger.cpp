@@ -3,175 +3,191 @@
 #include <fstream>
 #include <iostream>
 
-Logger::Logger(): m_exitFlag(false)
+#include "io/color.hpp"
+
+/**
+ * @brief Constructor for Logger. Launches the worker thread that will handle the log messages.
+ */
+Logger::Logger() : m_exitFlag(false)
 {
-	// Launch the worker thread that will handle the log messages
-	m_worker = std::thread([this] { processQueue(); });
+    m_worker = std::thread([this] { processQueue(); });
 }
 
+/**
+ * @brief Destructor for Logger. Signals the worker thread to exit and waits for it to finish.
+ */
 Logger::~Logger()
 {
-	m_exitFlag = true;			// Set the flag that signals the worker thread to exit
-	m_condition.notify_one();	// Notify the worker thread that it can exit
-	if (m_worker.joinable()) { m_worker.join(); }	// Wait for the worker thread to finish
+    m_exitFlag = true;
+    m_condition.notify_one();
+    if (m_worker.joinable()) { m_worker.join(); }
 }
 
-// get a Singleton instance
+/**
+ * @brief Returns a singleton instance of Logger.
+ * @return Logger& - The singleton instance.
+ */
 Logger& Logger::instance()
 {
-	static Logger instance;
-	return instance;
+    static Logger instance;
+    return instance;
 }
 
-//
+/**
+ * @brief Flushes the log queue.
+ */
 void Logger::flush()
 {
-	std::atomic waitForFlush = true;
-	while (waitForFlush) {
-		{
-			std::lock_guard<std::mutex> lock(m_queueMutex);
-			waitForFlush = !m_logQueue.empty();
-		}
-		if (waitForFlush)
-			std::this_thread::yield(); // Allow worker thread to process messages
-	}
+    std::atomic waitForFlush = true;
+    while (waitForFlush) {
+        {
+            std::lock_guard<std::mutex> lock(m_queueMutex);
+            waitForFlush = !m_logQueue.empty();
+        }
+        if (waitForFlush)
+            std::this_thread::yield(); // Allow worker thread to process messages
+    }
 }
 
-// Worker thread function to process the log messages
+/**
+ * @brief Worker thread function to process the log messages.
+ */
 void Logger::processQueue()
 {
-	// Keep processing messages until the exit flag is set and the queue is empty
-	while (!m_exitFlag || !m_logQueue.empty()) {
-		std::unique_lock lock(m_queueMutex);	
+    while (!m_exitFlag || !m_logQueue.empty()) {
+        std::unique_lock lock(m_queueMutex);
 
-		// Wait for a new log message to be added or for the exit flag to be set
-		m_condition.wait(lock, [this] { return m_exitFlag || !m_logQueue.empty(); });
+        m_condition.wait(lock, [this] { return m_exitFlag || !m_logQueue.empty(); });
 
-		// In case of a spurious wakeup, if the queue is empty, continue to the next iteration
-		if (m_logQueue.empty())
-			continue;
+        if (m_logQueue.empty())
+            continue;
 
-		auto msg = m_logQueue.front();
-		m_logQueue.pop();
-		lock.unlock();
+        auto msg = m_logQueue.front();
+        m_logQueue.pop();
+        lock.unlock();
 
-		handleLogMessage(msg);
-	}
+        handleLogMessage(msg);
+    }
 }
 
+/**
+ * @brief Handles a log message.
+ * @param t_msg - The log message to handle.
+ */
 void Logger::handleLogMessage(const LogMessage& t_msg)
 {
-	std::lock_guard lock(m_logMutex);
+    std::lock_guard lock(m_logMutex);
 
-	const auto now = std::chrono::system_clock::now();
-	const std::time_t tt = std::chrono::system_clock::to_time_t(now);
-	std::tm tm;
-	localtime_s(&tm, &tt);
+    const auto now = std::chrono::system_clock::now();
+    const std::time_t tt = std::chrono::system_clock::to_time_t(now);
+    std::tm tm{};
+    localtime_s(&tm, &tt);
 
-	std::ostringstream oss;
-	oss << std::put_time(&tm, "%d-%m-%Y %H:%M:%S")
-		<< " [" << toString(t_msg.level) << "] "
-		<< " File: " << t_msg.filename
-		<< " Line: " << t_msg.line
-		<< " - "
-		<< t_msg.message << std::endl;
+    std::ostringstream oss;
+    oss << std::put_time(&tm, "%d-%m-%Y %H:%M:%S")
+        << " [" << toString(t_msg.level) << "] "
+        << " File: " << t_msg.filename
+        << " Line: " << t_msg.line
+        << " - "
+        << t_msg.message << std::endl;
 
-	writeLogToFile(oss.str());
-	writeLogToConsole(t_msg.level, oss.str());
+    writeLogToFile(oss.str());
+    writeLogToConsole(t_msg.level, oss.str());
 }
 
+/**
+ * @brief Converts a log level to a string.
+ * @param t_level - The log level to convert.
+ * @return std::string - The string representation of the log level.
+ */
 std::string Logger::toString(const ELogLevel t_level)
 {
-	switch (t_level) {
-	case ELogLevel::INFO:     return "INFO";
-	case ELogLevel::WARNING:  return "WARNING";
-	case ELogLevel::ERROR:    return "ERROR";
-	case ELogLevel::CRITICAL: return "CRITICAL";
-	}
-	return "UNKNOWN";
+    switch (t_level) {
+    case ELogLevel::INFO:     return "INFO";
+    case ELogLevel::WARNING:  return "WARNING";
+    case ELogLevel::ERROR:    return "ERROR";
+    case ELogLevel::CRITICAL: return "CRITICAL";
+    }
+    return "UNKNOWN";
 }
 
+/**
+ * @brief Writes a log message to a file.
+ * @param t_logStr - The log message to write.
+ */
 void Logger::writeLogToFile(const std::string& t_logStr)
 {
-	// Ensure logs directory exists
-	if (!std::filesystem::exists("logs") || !std::filesystem::is_directory("logs")) {
-		std::filesystem::create_directory("logs");
-	}
+    if (!std::filesystem::exists("logs") || !std::filesystem::is_directory("logs")) {
+        std::filesystem::create_directory("logs");
+    }
 
-	// Generate filename on first log message
-	if (m_logFileName.empty()) {
-		const auto now = std::chrono::system_clock::now();
-		const auto tt = std::chrono::system_clock::to_time_t(now);
-		std::tm tm;
-		localtime_s(&tm, &tt);
-		std::ostringstream oss;
-		oss << "logs/" << std::put_time(&tm, "%Y%m%d_%H%M%S") << ".log";
-		m_logFileName = oss.str();
-	}
+    if (m_logFileName.empty()) {
+        const auto now = std::chrono::system_clock::now();
+        const auto tt = std::chrono::system_clock::to_time_t(now);
+        std::tm tm{};
+        localtime_s(&tm, &tt);
+        std::ostringstream oss;
+        oss << "logs/" << std::put_time(&tm, "%Y%m%d_%H%M%S") << ".log";
+        m_logFileName = oss.str();
+    }
 
-	// Write log message to file
-	std::ofstream logFile(m_logFileName, std::ios::app);
-	if (logFile) {
-		logFile << t_logStr;
-	}
+    std::ofstream logFile(m_logFileName, std::ios::app);
+    if (logFile) {
+        logFile << t_logStr;
+    }
 }
 
+/**
+ * @brief Writes a log message to the console.
+ * @param t_level - The log level of the message.
+ * @param t_logStr - The log message to write.
+ */
 void Logger::writeLogToConsole(const ELogLevel t_level, const std::string& t_logStr)
 {
 #ifdef PLATFORM_WINDOWS
-	// Change console color via Windows API handle because Windows command prompt
-	// only supports ANSI color escape codes when the program is run through an IDE
+    const HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_SCREEN_BUFFER_INFO consoleInfo;
 
-	// Grab console handle
-	const HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-	CONSOLE_SCREEN_BUFFER_INFO consoleInfo;
+    GetConsoleScreenBufferInfo(hConsole, &consoleInfo);
+    const WORD savedAttributes = consoleInfo.wAttributes;
 
-	// Save current color
-	GetConsoleScreenBufferInfo(hConsole, &consoleInfo);
-	const WORD savedAttributes = consoleInfo.wAttributes;
+    switch (t_level) {
+    case ELogLevel::INFO:
+        SetConsoleTextAttribute(hConsole, FG_BRIGHT_BLACK); // Grey text
+        break;
+    case ELogLevel::WARNING:
+        SetConsoleTextAttribute(hConsole, FG_YELLOW); // Yellow
+        break;
+    case ELogLevel::ERROR:
+        SetConsoleTextAttribute(hConsole, FG_RED); // Red text
+        break;
+    case ELogLevel::CRITICAL:
+        SetConsoleTextAttribute(hConsole, FG_WHITE | BG_RED); // Red background + white text
+        break;
+    }
+    std::cout << t_logStr;
 
-	// Switch color based on log level
-	switch (t_level) {
-	case ELogLevel::INFO:
-		SetConsoleTextAttribute(hConsole, 0x0008); // grey text
-		break;
-	case ELogLevel::WARNING:
-		SetConsoleTextAttribute(hConsole, 0x0004 | 0x0002); // gold text
-		break;
-	case ELogLevel::ERROR:
-		SetConsoleTextAttribute(hConsole, 0x0004); // red text
-		break;
-	case ELogLevel::CRITICAL:
-		SetConsoleTextAttribute(hConsole, 0x004f); // Red background + white text
-		break;
-	}
-	std::cout << t_logStr;
-
-	// Restore original color
-	SetConsoleTextAttribute(hConsole, savedAttributes);
+    SetConsoleTextAttribute(hConsole, savedAttributes); // Reset text color 
 
 #else
-		// For UNIX & LINUX variants, use ANSI escape codes to change console text color
-		switch (level) {
-		case ELogLevel::INFO:
-			std::cout << "\033[37m"; // grey
-			break;
-		case ELogLevel::WARNING:
-			std::cout << "\033[33m"; // gold
-			break;
-		case ELogLevel::ERROR:
-			std::cout << "\033[31m"; // red
-			break;
-		case ELogLevel::CRITICAL:
-			std::cout << "\033[41;37m"; // red background + white text
-			break;
-		default:
-			break;
-	}
+    switch (t_level) {
+    case ELogLevel::INFO:
+        std::cout << FG_BRIGHT_BLACK; // Grey
+        break;
+    case ELogLevel::WARNING:
+        std::cout << FG_YELLOW; // Yellow
+        break;
+    case ELogLevel::ERROR:
+        std::cout << FG_RED; // Red
+        break;
+    case ELogLevel::CRITICAL:
+        std::cout << BG_RED << FG_WHITE; // Red background + white text
+        break;
+    default:
+        break;
+    }
 
-		std::cout << logStr;
-
-		// Reset color
-		std::cout << "\033[0m";
+    std::cout << t_logStr;
+    std::cout << DEFAULT;
 #endif
 }

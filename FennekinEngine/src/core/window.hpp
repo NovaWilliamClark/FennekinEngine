@@ -1,38 +1,36 @@
 #pragma once
 
 struct GLFWwindow;
+typedef unsigned int GLenum;
+
 class Window
 {
 public:
-	// Public
+ Window();
+ ~Window();
 
-	/**
-	 * Initializes the GLFW window and the OpenGL context
-	 */
-	Window();
 
-	/**
-	 * Destroys the GLFW window and the OpenGL context
-	 */
-	~Window();
+ void bind();
 
-	/**
-	 * Binds the display framebuffer for drawing
-	 */
-	void bind();
+ void swapBuffer() const;
+ bool shouldClose() const;
+ GLFWwindow* getNativeWindow() const;
 
-	/*
-	 * Swaps the finished draw buffer with the display buffer
-	 */
-	void swapBuffer();
+ static constexpr int SCREEN_WIDTH = 1280;
+ static constexpr int SCREEN_HEIGHT = 720;
+ static constexpr float SCREEN_ASPECT_RATIO = static_cast<float>(SCREEN_WIDTH) / static_cast<float>(SCREEN_HEIGHT);
 
-	static constexpr int SCREEN_WIDTH = 1280; // Screen width in pixels
-	static constexpr int SCREEN_HEIGHT = 720; // Screen height in pixels
-	static constexpr float SCREEN_ASPECT_RATIO = static_cast<float>(SCREEN_WIDTH) / static_cast<float>(SCREEN_HEIGHT);
 private:
-	// Private
 
-	GLFWwindow* m_window = nullptr;
+ bool initGLFW();
 
+ bool initGLEW(GLenum& t_errorCode);
+
+ bool createWindow();
+
+ bool createContext() const;
+
+ static void errorCallback(int t_error, const char* t_description);
+
+ GLFWwindow* m_window = nullptr;
 };
-

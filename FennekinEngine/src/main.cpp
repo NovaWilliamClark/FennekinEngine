@@ -1,8 +1,8 @@
-#include <iostream>
-
-#include "core/logger.hpp"
-
+#include "core/engine.hpp"
 int main()
 {
+	Engine engine;
+	engine.run();
+
 	return 0;
 }
