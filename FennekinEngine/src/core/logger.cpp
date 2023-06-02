@@ -38,15 +38,15 @@ Logger& Logger::instance()
  */
 void Logger::flush()
 {
-    std::atomic waitForFlush = true;
-    while (waitForFlush) {
-        {
-            std::lock_guard<std::mutex> lock(m_queueMutex);
-            waitForFlush = !m_logQueue.empty();
-        }
-        if (waitForFlush)
-            std::this_thread::yield(); // Allow worker thread to process messages
-    }
+	std::atomic waitForFlush = true;
+	while (waitForFlush) {
+		{
+			std::lock_guard<std::mutex> lock(m_queueMutex);
+			waitForFlush = !m_logQueue.empty();
+		}
+		if (waitForFlush)
+			std::this_thread::yield(); // Allow worker thread to process messages
+	}
 }
 
 /**
@@ -54,20 +54,26 @@ void Logger::flush()
  */
 void Logger::processQueue()
 {
-    while (!m_exitFlag || !m_logQueue.empty()) {
-        std::unique_lock lock(m_queueMutex);
+	while (!m_exitFlag || !m_logQueue.empty()) {
+		std::unique_lock lock(m_queueMutex);
 
-        m_condition.wait(lock, [this] { return m_exitFlag || !m_logQueue.empty(); });
+		m_condition.wait(lock, [this] { return m_exitFlag || !m_logQueue.empty(); });
 
-        if (m_logQueue.empty())
-            continue;
+		if (m_logQueue.empty()) {
+			if (m_flushInProgress) {
+				m_flushInProgress = false;
+				m_flushCV.notify_one();
+			}
 
-        auto msg = m_logQueue.front();
-        m_logQueue.pop();
-        lock.unlock();
+			continue;
+		}
 
-        handleLogMessage(msg);
-    }
+		auto msg = m_logQueue.front();
+		m_logQueue.pop();
+		lock.unlock();
+
+		handleLogMessage(msg);
+	}
 }
 
 /**
