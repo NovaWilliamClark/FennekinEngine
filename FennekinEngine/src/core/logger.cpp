@@ -18,6 +18,7 @@ Logger::Logger() : m_exitFlag(false)
  */
 Logger::~Logger()
 {
+    flush();
     m_exitFlag = true;
     m_condition.notify_one();
     if (m_worker.joinable()) { m_worker.join(); }
@@ -59,14 +60,9 @@ void Logger::processQueue()
 
 		m_condition.wait(lock, [this] { return m_exitFlag || !m_logQueue.empty(); });
 
-		if (m_logQueue.empty()) {
-			if (m_flushInProgress) {
-				m_flushInProgress = false;
-				m_flushCV.notify_one();
-			}
-
-			continue;
-		}
+        if (m_logQueue.empty()) {
+            continue;
+        }
 
 		auto msg = m_logQueue.front();
 		m_logQueue.pop();

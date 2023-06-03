@@ -37,14 +37,11 @@ Window::~Window() {
 	glfwTerminate();
 }
 
-
-void Window::bind() {
+void Window::clear() {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 }
-
 
 void Window::swapBuffers() const {
 	glfwSwapBuffers(m_window);
@@ -101,7 +98,7 @@ bool Window::createContext() const {
 	}
 
 	LOG_INFO("GLFW & OpenGL Core Context Successfuly Inititalized\n");
-	
+
 	LOG_INFO("OpenGL Version: {0}", reinterpret_cast<const char*>(glGetString(GL_VERSION)));
 	LOG_INFO("OpenGL Vendor: {0}", reinterpret_cast<const char*>(glGetString(GL_VENDOR)));
 	LOG_INFO("OpenGL Renderer: {0}", reinterpret_cast<const char*>(glGetString(GL_RENDERER)));
@@ -113,7 +110,7 @@ bool Window::createContext() const {
 	glEnable(GL_FRAMEBUFFER_SRGB); // Enable sRGB conversion for the default framebuffer
 	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS); // Enable seamless cubemap sampling
 
-	//glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT); // Set the viewport to the window size
+	glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT); // Set the viewport to the window size
 	return true;
 }
 

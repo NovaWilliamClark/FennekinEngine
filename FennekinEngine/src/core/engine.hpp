@@ -1,6 +1,7 @@
 #pragma once
-#include "time.hpp"
-#include "Window.hpp"
+#include "core/time.hpp"
+#include "core/window.hpp"
+#include "io/inputManager.hpp"
 
 class Engine
 {
@@ -11,7 +12,8 @@ public:
     void run();
 
 private:
-    Window m_window;
     Time m_timer;
+    Window m_window;
+    InputManager m_inputManager;
 };
 

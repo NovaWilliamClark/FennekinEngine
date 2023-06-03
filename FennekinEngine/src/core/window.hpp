@@ -10,7 +10,7 @@ public:
  ~Window();
 
 
- void bind();
+ void clear();
 
  void swapBuffers() const;
  bool shouldClose() const;
@@ -18,7 +18,7 @@ public:
 
  static constexpr int SCREEN_WIDTH = 1280;
  static constexpr int SCREEN_HEIGHT = 720;
- static constexpr float SCREEN_ASPECT_RATIO = static_cast<float>(SCREEN_WIDTH) / static_cast<float>(SCREEN_HEIGHT);
+ static constexpr float_t SCREEN_ASPECT_RATIO = static_cast<float_t>(SCREEN_WIDTH) / static_cast<float_t>(SCREEN_HEIGHT);
 
 private:
 

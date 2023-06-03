@@ -126,6 +126,4 @@ private:
 	std::atomic_bool m_exitFlag;
 	std::thread m_worker;
 	std::mutex m_logMutex;
-	std::condition_variable m_flushCV;
-	std::atomic_bool m_flushInProgress;
 };
