@@ -21,7 +21,9 @@ Window::Window() {
 		LOG_CRITICAL("Failed to create an OpenGL Context");
 	}
 
-	if (GLenum errorCode; !initGLEW(errorCode)) {
+	GLenum errorCode =  0;
+
+	if ( !initGLEW(errorCode)) {
 		switch (errorCode) {
 		case GLEW_ERROR_NO_GL_VERSION: LOG_CRITICAL("GLEW failed to initialize! OpenGL version could not be determined");
 		case GLEW_ERROR_GL_VERSION_10_ONLY: LOG_CRITICAL("GLEW failed to initialize! OpenGL 1.1 or higher is required");

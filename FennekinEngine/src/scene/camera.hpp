@@ -94,5 +94,5 @@ private:
 	float_t m_farPlane;            // The far plane distance.
 	float_t m_viewportAspectRatio; // The viewport aspect ratio.
 
-	float_t m_cameraSpeed; // The camera speed.
+	float_t m_cameraSpeed{}; // The camera speed.
 };

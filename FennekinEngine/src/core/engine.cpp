@@ -6,13 +6,14 @@
 #include "core/time.hpp"
 #include "core/window.hpp"
 
-Engine::Engine() : m_inputManager(&m_window) {
+Engine::Engine() : m_window(), m_sceneManager(), m_inputManager(&m_window) {
+
 }
 
 Engine::~Engine() = default;
 
 void Engine::run() {
-    LOG_INFO("Engine Initialization took: {0}ns", m_timer.endTimer<Time::Nanoseconds>());
+    LOG_INFO("Engine Initialization took: {0}ms", m_timer.endTimer<Time::Milliseconds>());
     //float_t deltaTime = m_timer.getDeltaTime();
     //
     //// Map the 'A' key to a single press action that prints a message

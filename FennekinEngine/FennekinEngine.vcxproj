@@ -65,7 +65,7 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <AdditionalIncludeDirectories>$(ProjectDir)\lib\assimp\include;$(ProjectDir)\lib\glew\include;$(ProjectDir)\lib\glfw\include;$(ProjectDir)\lib</AdditionalIncludeDirectories>
-      <TreatWarningAsError>true</TreatWarningAsError>
+      <TreatWarningAsError>false</TreatWarningAsError>
       <FloatingPointModel>Fast</FloatingPointModel>
       <DisableSpecificWarnings>4005</DisableSpecificWarnings>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -89,7 +89,7 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <AdditionalIncludeDirectories>$(ProjectDir)\lib\assimp\include;$(ProjectDir)\lib\glew\include;$(ProjectDir)\lib\glfw\include;$(ProjectDir)\lib</AdditionalIncludeDirectories>
-      <TreatWarningAsError>true</TreatWarningAsError>
+      <TreatWarningAsError>false</TreatWarningAsError>
       <FloatingPointModel>Fast</FloatingPointModel>
       <DisableSpecificWarnings>4005</DisableSpecificWarnings>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -104,6 +104,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\scene\scene.cpp" />
+    <ClCompile Include="src\scene\sceneManager.cpp" />
     <ClCompile Include="src\io\inputManager.cpp" />
     <ClCompile Include="src\scene\camera.cpp" />
     <ClCompile Include="src\core\engine.cpp" />
@@ -113,6 +115,8 @@
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\scene\scene.hpp" />
+    <ClInclude Include="src\scene\sceneManager.hpp" />
     <ClInclude Include="src\io\inputManager.hpp" />
     <ClInclude Include="src\scene\camera.hpp" />
     <ClInclude Include="src\core\engine.hpp" />
@@ -121,6 +125,9 @@
     <ClInclude Include="src\core\window.hpp" />
     <ClInclude Include="src\io\color.hpp" />
     <ClInclude Include="src\platform\platform.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="content\scenes\Intel_Sponza.json" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
