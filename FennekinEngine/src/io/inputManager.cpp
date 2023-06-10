@@ -61,11 +61,12 @@ void InputManager::processKey() {
     }
 
     // Process continuous actions.
-    for (const auto& [key, action] : m_continuousActions) {
-        if (glfwGetKey(m_window->getNativeWindow(), key) == GLFW_PRESS) {
-            action();
-        }
-    }
+	for (const auto& [key, action] : m_continuousActions) {
+        const int keyState = glfwGetKey(m_window->getNativeWindow(), key);
+		if (keyState == GLFW_PRESS || keyState == GLFW_REPEAT) {
+			action();
+		}
+	}
 }
 
 void InputManager::cursorPositionCallback(GLFWwindow* t_window, const double t_xPos, const double t_yPos) {

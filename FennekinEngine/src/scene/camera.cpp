@@ -18,7 +18,14 @@ Camera::Camera()
 
 void Camera::update(const float t_deltaTime)
 {
-    t_deltaTime;
+	glm::vec3 front;
+	front.x = cos(glm::radians(m_yaw)) * cos(glm::radians(m_pitch));
+	front.y = sin(glm::radians(m_pitch));
+	front.z = sin(glm::radians(m_yaw)) * cos(glm::radians(m_pitch));
+
+	m_front = glm::normalize(front);
+	m_right = glm::normalize(glm::cross(m_front, m_worldUp));
+	m_up = glm::normalize(glm::cross(m_right, m_front));
     // Update camera vectors based on pitch and yaw here.
     // This is a simplified version and may not work correctly in a real application.
 }
@@ -30,7 +37,9 @@ void Camera::updateOrientation() {
    m_front = glm::normalize(m_front);
    m_right  = glm::normalize(glm::cross(m_front, m_up));
 }
-void Camera::updateTranslation() {}
+void Camera::updateTranslation() {
+    
+}
 
 glm::mat4 Camera::getProjectionViewMatrix() const
 {
@@ -65,4 +74,12 @@ void Camera::setFieldOfView(const float_t t_degrees)
 void Camera::setViewportAspectRatio(const float_t t_aspectRatio)
 {
     m_viewportAspectRatio = t_aspectRatio;
+}
+
+void Camera::setCameraSpeed(const float t_speed) {
+    m_cameraSpeed = t_speed;
+}
+
+void Camera::setMouseSensitivity(const float t_sensitivity) {
+    m_mouseSensitivity = t_sensitivity;
 }

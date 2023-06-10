@@ -7,7 +7,7 @@
 class Scene
 {
 public:
-    explicit Scene(const std::string& t_sceneID, bool& t_status);
+    Scene(const std::string& t_sceneID, bool& t_status);
     ~Scene();
 
     void update(float_t t_deltaTime);
@@ -28,7 +28,7 @@ public:
 
 private:
     std::string m_sceneID;
-    bool m_shouldDisplayClusterSlices;
+    std::unique_ptr<Camera> m_sceneCamera;
 
     bool loadSceneContent();
     bool loadSkyBox(nlohmann::json& t_sceneData);

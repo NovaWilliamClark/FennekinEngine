@@ -79,6 +79,9 @@ public:
 	 */
 	void setViewportAspectRatio(float_t t_aspectRatio);
 
+	void setCameraSpeed(float t_speed);
+	void setMouseSensitivity(float t_sensitivity);
+
 private:
 	glm::vec3 m_front;    // The front direction of the camera.
 	glm::vec3 m_right;    // The right direction of the camera.
@@ -95,4 +98,5 @@ private:
 	float_t m_viewportAspectRatio; // The viewport aspect ratio.
 
 	float_t m_cameraSpeed{}; // The camera speed.
+	float_t m_mouseSensitivity{}; // The camera speed.
 };
