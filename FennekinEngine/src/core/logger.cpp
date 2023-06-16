@@ -3,7 +3,7 @@
 #include <fstream>
 #include <iostream>
 
-#include "io/color.hpp"
+#include "platform/consoleColor.hpp"
 
 /**
  * @brief Constructor for Logger. Launches the worker thread that will handle the log messages.

@@ -20,8 +20,8 @@ Scene::~Scene() {}
 void Scene::update(float_t t_deltaTime) {
 }
 
-Camera* Scene::getCurrentCamera() {
-    return nullptr;
+Camera* Scene::getCurrentCamera() const {
+    return m_sceneCamera.get();
 }
 
 int8_t Scene::getShadowResolution() {
@@ -57,11 +57,11 @@ bool Scene::loadSkyBox(nlohmann::json& t_sceneData) {
     LOG_INFO("Loading Scene Skybox");
     nlohmann::json cameraSettings = t_sceneData["camera"];
 
-    float moveSpeed = cameraSettings["speed"];
-    float sensitivity = cameraSettings["mouseSens"];
-    float fieldOfView = cameraSettings["fov"];
-    float nearPlane = cameraSettings["nearPlane"];
-    float farPlane = cameraSettings["farPlane"];
+    float_t moveSpeed = cameraSettings["speed"];
+    float_t sensitivity = cameraSettings["mouseSens"];
+    float_t fieldOfView = cameraSettings["fov"];
+    float_t nearPlane = cameraSettings["nearPlane"];
+    float_t farPlane = cameraSettings["farPlane"];
 
     nlohmann::json position = cameraSettings["position"];
     auto pos = glm::vec3(position[0], position[1], position[2]);
@@ -70,11 +70,11 @@ bool Scene::loadSkyBox(nlohmann::json& t_sceneData) {
     auto tar = glm::vec3(target[0], target[1], target[2]);
 
     m_sceneCamera = std::make_unique<Camera>();
-    m_sceneCamera->setCameraSpeed(moveSpeed);
-    m_sceneCamera->setFieldOfView(sensitivity);
-    m_sceneCamera->setFieldOfView(fieldOfView);
-    m_sceneCamera->setNearPlane(nearPlane);
-    m_sceneCamera->setFarPlane(farPlane);
+    //m_sceneCamera->setCameraSpeed(moveSpeed);
+    //m_sceneCamera->setFieldOfView(sensitivity);
+    //m_sceneCamera->setFieldOfView(fieldOfView);
+    //m_sceneCamera->setNearPlane(nearPlane);
+    //m_sceneCamera->setFarPlane(farPlane);
 
     // TODO: Load in Camera config
 

@@ -16,6 +16,10 @@ bool SceneManager::switchScene(std::string& t_sceneID) {
     return false;
 }
 
+Scene* SceneManager::getCurrentScene() const {
+    return m_scene.get();
+}
+
 bool SceneManager::loadScene(std::string& t_sceneID) {
     bool isSuccessful;
     m_scene = std::make_unique<Scene>(t_sceneID, isSuccessful);

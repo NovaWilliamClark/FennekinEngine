@@ -1,7 +1,6 @@
 #pragma once
 #include "core/time.hpp"
 #include "core/window.hpp"
-#include "io/inputManager.hpp"
 #include "scene/sceneManager.hpp"
 
 
@@ -16,7 +15,7 @@ public:
 private:
     Time m_timer;
     Window m_window;
-    InputManager m_inputManager;
+    Camera m_camera;
     SceneManager m_sceneManager;
 };
 

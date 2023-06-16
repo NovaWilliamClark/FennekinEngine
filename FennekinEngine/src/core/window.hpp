@@ -1,36 +1,59 @@
 #pragma once
+#include <glm/vec4.hpp>
+
+#include "renderer/core/context.hpp"
+#include "renderer/interfaces/UniformSource.hpp"
+#include "renderer/resources/shader.hpp"
+
+struct ImageSize {
+	int width;
+	int height;
+
+	inline bool operator==(const ImageSize& t_comparison) const {
+		return this->width == t_comparison.width && this->height == t_comparison.height;
+	}
+	inline bool operator!=(const ImageSize& t_comparison) const {
+		return !operator==(t_comparison);
+	}
+};
 
 struct GLFWwindow;
 typedef unsigned int GLenum;
 
-class Window
+class Window final : public UniformSource
 {
 public:
- Window();
- ~Window();
+	Window() = default;
+	explicit Window(bool t_fullscreen);
+	~Window() override;
+
+	void setViewport();
+	void enableVSync();
+	void disableVSync();
+	void updateUniforms(Shader& t_shader, float_t t_deltaTime) override;
 
 
- void clear();
+	ImageSize getSize() const;
+	void setSize(int t_width, int t_height);
+	void enableResizeUpdates();
+	void disableResizeUpdates();
+	float_t getAspectRatio() const;
 
- void swapBuffers() const;
- bool shouldClose() const;
- GLFWwindow* getNativeWindow() const;
+	void clear();
 
- static constexpr int SCREEN_WIDTH = 1280;
- static constexpr int SCREEN_HEIGHT = 720;
- static constexpr float_t SCREEN_ASPECT_RATIO = static_cast<float_t>(SCREEN_WIDTH) / static_cast<float_t>(SCREEN_HEIGHT);
+	void swapBuffers() const;
+	bool shouldClose() const;
+	GLFWwindow* getNativeWindow() const;
 
 private:
 
- bool initGLFW();
+	bool initGLFW();
+	bool initGLEW(GLenum& t_errorCode);
+	bool createWindow(bool t_fullscreen);
+	bool createContext();
 
- bool initGLEW(GLenum& t_errorCode);
+	static void errorCallback(int t_error, const char* t_description);
 
- bool createWindow();
-
- bool createContext() const;
-
- static void errorCallback(int t_error, const char* t_description);
-
- GLFWwindow* m_window = nullptr;
+	GLFWwindow* m_window = nullptr;
+	Context m_context;
 };

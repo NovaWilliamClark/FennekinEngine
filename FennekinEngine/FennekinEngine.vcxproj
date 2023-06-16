@@ -69,6 +69,7 @@
       <FloatingPointModel>Fast</FloatingPointModel>
       <DisableSpecificWarnings>4005</DisableSpecificWarnings>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -93,6 +94,8 @@
       <FloatingPointModel>Fast</FloatingPointModel>
       <DisableSpecificWarnings>4005</DisableSpecificWarnings>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -104,27 +107,90 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\scene\meshPrimatives.cpp" />
+    <ClCompile Include="src\scene\lighting\spotLight.cpp" />
+    <ClCompile Include="src\scene\lighting\pointLight.cpp" />
+    <ClCompile Include="src\scene\lighting\directionalLight.cpp" />
+    <ClCompile Include="src\scene\lighting\light.cpp" />
+    <ClCompile Include="src\renderer\postprocess\ibl.cpp" />
+    <ClCompile Include="src\input\cameraController.cpp" />
+    <ClCompile Include="src\scene\mesh.cpp" />
+    <ClCompile Include="src\renderer\resources\cubemap.cpp" />
+    <ClCompile Include="src\scene\model.cpp" />
+    <ClCompile Include="src\core\gui.cpp" />
+    <ClCompile Include="src\input\inputManager.cpp" />
+    <ClCompile Include="src\renderer\registers\lightRegistry.cpp" />
+    <ClCompile Include="src\renderer\core\gBuffer.cpp" />
+    <ClCompile Include="src\renderer\resources\loaders\shaderLoader.cpp" />
+    <ClCompile Include="src\scene\lighting\shadowCamera.cpp" />
+    <ClCompile Include="src\scene\lighting\shadowMap.cpp" />
+    <ClCompile Include="src\renderer\resources\shaderPrimatives.cpp" />
+    <ClCompile Include="src\renderer\postprocess\blur.cpp" />
+    <ClCompile Include="src\renderer\core\fbo.cpp" />
+    <ClCompile Include="src\renderer\postprocess\bloom.cpp" />
+    <ClCompile Include="src\renderer\postprocess\fxaa.cpp" />
+    <ClCompile Include="src\renderer\core\context.cpp" />
+    <ClCompile Include="src\renderer\resources\shader.cpp" />
     <ClCompile Include="src\scene\scene.cpp" />
     <ClCompile Include="src\scene\sceneManager.cpp" />
-    <ClCompile Include="src\io\inputManager.cpp" />
     <ClCompile Include="src\scene\camera.cpp" />
     <ClCompile Include="src\core\engine.cpp" />
     <ClCompile Include="src\core\logger.cpp" />
     <ClCompile Include="src\core\time.cpp" />
     <ClCompile Include="src\core\window.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\renderer\postprocess\ssao.cpp" />
+    <ClCompile Include="src\renderer\core\vao.cpp" />
+    <ClCompile Include="src\renderer\resources\texture.cpp" />
+    <ClCompile Include="src\renderer\resources\textureAtlas.cpp" />
+    <ClCompile Include="src\renderer\resources\loaders\textureLoader.cpp" />
+    <ClCompile Include="src\renderer\registers\textureRegistry.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\renderer\interfaces\shaderSource.hpp" />
+    <ClInclude Include="src\scene\meshPrimatives.hpp" />
+    <ClInclude Include="src\scene\lighting\spotLight.hpp" />
+    <ClInclude Include="src\scene\lighting\pointLight.hpp" />
+    <ClInclude Include="src\scene\lighting\directionalLight.hpp" />
+    <ClInclude Include="src\scene\lighting\light.hpp" />
+    <ClInclude Include="src\renderer\postprocess\ibl.h" />
+    <ClInclude Include="src\input\cameraController.hpp" />
+    <ClInclude Include="src\scene\mesh.hpp" />
+    <ClInclude Include="src\renderer\resources\cubemap.hpp" />
+    <ClInclude Include="src\scene\model.h" />
+    <ClInclude Include="src\input\inputManager.hpp" />
+    <ClInclude Include="src\renderer\interfaces\ViewSource.hpp" />
+    <ClInclude Include="src\renderer\registers\lightRegistry.hpp" />
+    <ClInclude Include="src\renderer\core\gBuffer.hpp" />
+    <ClInclude Include="src\renderer\resources\loaders\shaderLoader.hpp" />
+    <ClInclude Include="src\core\gui.hpp" />
+    <ClInclude Include="src\scene\lighting\shadowCamera.hpp" />
+    <ClInclude Include="src\scene\lighting\shadowMap.hpp" />
+    <ClInclude Include="src\renderer\resources\shaderPrimatives.h" />
+    <ClInclude Include="src\renderer\postprocess\blur.hpp" />
+    <ClInclude Include="src\renderer\core\fbo.hpp" />
+    <ClInclude Include="src\renderer\postprocess\bloom.hpp" />
+    <ClInclude Include="src\renderer\postprocess\fxaa.hpp" />
+    <ClInclude Include="src\renderer\core\context.hpp" />
+    <ClInclude Include="src\renderer\resources\shader.hpp" />
+    <ClInclude Include="src\platform\consoleColor.hpp" />
+    <ClInclude Include="src\renderer\interfaces\UniformSource.hpp" />
     <ClInclude Include="src\scene\scene.hpp" />
     <ClInclude Include="src\scene\sceneManager.hpp" />
-    <ClInclude Include="src\io\inputManager.hpp" />
     <ClInclude Include="src\scene\camera.hpp" />
     <ClInclude Include="src\core\engine.hpp" />
     <ClInclude Include="src\core\logger.hpp" />
     <ClInclude Include="src\core\time.hpp" />
     <ClInclude Include="src\core\window.hpp" />
-    <ClInclude Include="src\io\color.hpp" />
     <ClInclude Include="src\platform\platform.hpp" />
+    <ClInclude Include="src\utilities\constants.hpp" />
+    <ClInclude Include="src\renderer\postprocess\ssao.hpp" />
+    <ClInclude Include="src\renderer\core\vao.hpp" />
+    <ClInclude Include="src\utilities\random.hpp" />
+    <ClInclude Include="src\renderer\resources\texture.hpp" />
+    <ClInclude Include="src\renderer\resources\textureAtlas.hpp" />
+    <ClInclude Include="src\renderer\resources\loaders\textureLoader.h" />
+    <ClInclude Include="src\renderer\registers\textureRegistry.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="content\scenes\Intel_Sponza.json" />

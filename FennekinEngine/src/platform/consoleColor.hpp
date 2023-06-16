@@ -1,6 +1,5 @@
 #pragma once
-#include "platform/platform.hpp"
-
+#include "platform.hpp"
 #ifdef PLATFORM_WINDOWS
 #define FG_BLACK          0x0000 // Black
 #define FG_BLUE           0x0001 // Blue

@@ -23,7 +23,7 @@ public:
     //void drawDepthPass(const Shader& depthPassShader);
 
     // TODO: Create the render queue
-    Camera* getCurrentCamera();
+    Camera* getCurrentCamera() const;
     int8_t getShadowResolution();
 
 private:

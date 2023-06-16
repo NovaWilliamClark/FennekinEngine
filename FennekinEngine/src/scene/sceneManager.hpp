@@ -9,6 +9,7 @@ public:
 
     void update(float_t t_deltaTime);
     bool switchScene(std::string& t_sceneID);
+    Scene* getCurrentScene() const;
 
 private:
     bool loadScene(std::string& t_sceneID);
