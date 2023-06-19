@@ -15,256 +15,283 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\main.cpp">
+    <Text Include="content\scenes\Intel_Sponza.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\core\debug\debug.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\logger.cpp">
+    <ClCompile Include="src\core\debug\exceptions.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\time.cpp">
+    <ClCompile Include="src\core\debug\logger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\window.cpp">
+    <ClCompile Include="src\core\core.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\core\engine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\scene\camera.cpp">
+    <ClCompile Include="src\core\time.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\scene\scene.cpp">
+    <ClCompile Include="src\core\window.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\scene\sceneManager.cpp">
+    <ClCompile Include="src\rendering\core\framebuffer.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\renderer\resources\shader.cpp">
+    <ClCompile Include="src\rendering\core\gBuffer.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\renderer\core\context.cpp">
+    <ClCompile Include="src\rendering\core\vertex_array.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\renderer\postprocess\fxaa.cpp">
+    <ClCompile Include="src\rendering\postprocess\bloom.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\renderer\postprocess\bloom.cpp">
+    <ClCompile Include="src\rendering\postprocess\blur.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\renderer\postprocess\ssao.cpp">
+    <ClCompile Include="src\rendering\postprocess\fxaa.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\renderer\core\vao.cpp">
+    <ClCompile Include="src\rendering\postprocess\ibl.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\renderer\core\fbo.cpp">
+    <ClCompile Include="src\rendering\postprocess\ssao.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\renderer\postprocess\blur.cpp">
+    <ClCompile Include="src\rendering\registers\texture_registry.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\renderer\resources\texture.cpp">
+    <ClCompile Include="src\rendering\resources\loaders\shader_compiler.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\renderer\resources\textureAtlas.cpp">
+    <ClCompile Include="src\rendering\resources\loaders\shader_loader.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\renderer\resources\shaderPrimatives.cpp">
+    <ClCompile Include="src\rendering\resources\cubemap.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\scene\lighting\shadowMap.cpp">
+    <ClCompile Include="src\rendering\resources\shader.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\scene\lighting\shadowCamera.cpp">
+    <ClCompile Include="src\rendering\resources\shader_primitives.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\renderer\resources\loaders\shaderLoader.cpp">
+    <ClCompile Include="src\rendering\resources\texture.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\renderer\resources\loaders\textureLoader.cpp">
+    <ClCompile Include="src\scene\lighting\light.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\renderer\core\gBuffer.cpp">
+    <ClCompile Include="src\scene\lighting\shadows.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\renderer\resources\cubemap.cpp">
+    <ClCompile Include="src\scene\camera.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\renderer\registers\textureRegistry.cpp">
+    <ClCompile Include="src\scene\mesh.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\renderer\registers\lightRegistry.cpp">
+    <ClCompile Include="src\scene\mesh_primitives.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\input\inputManager.cpp">
+    <ClCompile Include="src\scene\model.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\gui.cpp">
+    <ClCompile Include="src\utilities\random.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\scene\model.cpp">
+    <ClCompile Include="src\main.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\scene\mesh.cpp">
+    <ClCompile Include="lib\imgui\backends\imgui_impl_glfw.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\input\cameraController.cpp">
+    <ClCompile Include="lib\imgui\backends\imgui_impl_opengl3.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\renderer\postprocess\ibl.cpp">
+    <ClCompile Include="lib\imgui\imgui.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\scene\lighting\light.cpp">
+    <ClCompile Include="lib\imgui\imgui_demo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\scene\lighting\directionalLight.cpp">
+    <ClCompile Include="lib\imgui\imgui_draw.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\scene\lighting\pointLight.cpp">
+    <ClCompile Include="lib\imgui\imgui_tables.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\scene\lighting\spotLight.cpp">
+    <ClCompile Include="lib\imgui\imgui_widgets.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\scene\meshPrimatives.cpp">
+    <ClCompile Include="lib\imguizmo_quat\imGuIZMOquat.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\platform\platform.hpp">
+    <ClInclude Include="src\core\debug\debug.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\logger.hpp">
+    <ClInclude Include="src\core\debug\exceptions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\time.hpp">
+    <ClInclude Include="src\core\debug\logger.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\window.hpp">
+    <ClInclude Include="src\core\core.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\core\engine.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\scene\camera.hpp">
+    <ClInclude Include="src\core\gui.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\scene\scene.hpp">
+    <ClInclude Include="src\core\time.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\scene\sceneManager.hpp">
+    <ClInclude Include="src\core\window.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\platform\consoleColor.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\renderer\interfaces\UniformSource.hpp">
+    <ClInclude Include="src\platform\platform.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\renderer\resources\shader.hpp">
+    <ClInclude Include="src\rendering\core\framebuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\renderer\core\context.hpp">
+    <ClInclude Include="src\rendering\core\gBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\utilities\constants.hpp">
+    <ClInclude Include="src\rendering\core\vertex_array.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\renderer\postprocess\fxaa.hpp">
+    <ClInclude Include="src\rendering\interfaces\screen.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\renderer\postprocess\bloom.hpp">
+    <ClInclude Include="src\rendering\postprocess\bloom.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\renderer\postprocess\ssao.hpp">
+    <ClInclude Include="src\rendering\postprocess\blur.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\renderer\core\vao.hpp">
+    <ClInclude Include="src\rendering\postprocess\fxaa.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\renderer\core\fbo.hpp">
+    <ClInclude Include="src\rendering\postprocess\ibl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\renderer\postprocess\blur.hpp">
+    <ClInclude Include="src\rendering\postprocess\ssao.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\utilities\random.hpp">
+    <ClInclude Include="src\rendering\registers\texture_registry.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\renderer\resources\texture.hpp">
+    <ClInclude Include="src\rendering\resources\loaders\shader_compiler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\renderer\resources\textureAtlas.hpp">
+    <ClInclude Include="src\rendering\resources\loaders\shader_loader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\renderer\resources\shaderPrimatives.h">
+    <ClInclude Include="src\rendering\resources\cubemap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\scene\lighting\shadowMap.hpp">
+    <ClInclude Include="src\rendering\resources\shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\scene\lighting\shadowCamera.hpp">
+    <ClInclude Include="src\rendering\resources\shader_defs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\gui.hpp">
+    <ClInclude Include="src\rendering\resources\shader_primitives.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\renderer\resources\loaders\shaderLoader.hpp">
+    <ClInclude Include="src\rendering\resources\texture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\renderer\resources\loaders\textureLoader.h">
+    <ClInclude Include="src\rendering\resources\texture_map.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\renderer\core\gBuffer.hpp">
+    <ClInclude Include="src\scene\lighting\light.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\renderer\resources\cubemap.hpp">
+    <ClInclude Include="src\scene\lighting\shadows.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\renderer\registers\textureRegistry.h">
+    <ClInclude Include="src\scene\camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\renderer\registers\lightRegistry.hpp">
+    <ClInclude Include="src\scene\mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\input\inputManager.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\renderer\interfaces\ViewSource.hpp">
+    <ClInclude Include="src\scene\mesh_primitives.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\scene\model.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\scene\mesh.hpp">
+    <ClInclude Include="src\utilities\random.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\input\cameraController.hpp">
+    <ClInclude Include="src\utilities\utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\renderer\postprocess\ibl.h">
+    <ClInclude Include="src\pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\scene\lighting\light.hpp">
+    <ClInclude Include="lib\imgui\backends\imgui_impl_glfw.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\scene\lighting\directionalLight.hpp">
+    <ClInclude Include="lib\imgui\backends\imgui_impl_opengl3.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\scene\lighting\pointLight.hpp">
+    <ClInclude Include="lib\imgui\backends\imgui_impl_opengl3_loader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\scene\lighting\spotLight.hpp">
+    <ClInclude Include="lib\imgui\imconfig.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\scene\meshPrimatives.hpp">
+    <ClInclude Include="lib\imgui\imgui.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\renderer\interfaces\shaderSource.hpp">
+    <ClInclude Include="lib\imgui\imgui_internal.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="content\scenes\Intel_Sponza.json" />
+    <ClInclude Include="lib\imgui\imstb_rectpack.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\imgui\imstb_textedit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\imgui\imstb_truetype.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\nlohmann\json.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\imguizmo_quat\imGuIZMOquat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\imguizmo_quat\vgConfig.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\imguizmo_quat\vGizmo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\imguizmo_quat\vGizmoMath.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\imguizmo_quat\vgMath.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\stb_image\stb_image.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

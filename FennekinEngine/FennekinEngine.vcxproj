@@ -58,13 +58,13 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <WarningLevel>Level4</WarningLevel>
+      <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>GLEW_STATIC;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>GLEW_STATIC;NOMINMAX;_CRT_SECURE_NO_WARNINGS;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <AdditionalIncludeDirectories>$(ProjectDir)\lib\assimp\include;$(ProjectDir)\lib\glew\include;$(ProjectDir)\lib\glfw\include;$(ProjectDir)\lib</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\lib\assimp\include;$(ProjectDir)\lib\glew\include;$(ProjectDir)\lib\glfw\include;$(ProjectDir)\lib\imgui;$(ProjectDir)\lib\imguizmo_quat;$(ProjectDir)\lib</AdditionalIncludeDirectories>
       <TreatWarningAsError>false</TreatWarningAsError>
       <FloatingPointModel>Fast</FloatingPointModel>
       <DisableSpecificWarnings>4005</DisableSpecificWarnings>
@@ -78,18 +78,21 @@
       <AdditionalDependencies>opengl32.lib;glew32s.lib;glfw3.lib;assimp-mt-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ShowProgress>LinkVerbose</ShowProgress>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy "$(ProjectDir)\lib\assimp\bin\assimp-vc143-mtd.dll" "$(OutDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <WarningLevel>Level4</WarningLevel>
+      <WarningLevel>Level3</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>GLEW_STATIC;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>GLEW_STATIC;NOMINMAX;_CRT_SECURE_NO_WARNINGS;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <AdditionalIncludeDirectories>$(ProjectDir)\lib\assimp\include;$(ProjectDir)\lib\glew\include;$(ProjectDir)\lib\glfw\include;$(ProjectDir)\lib</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\lib\assimp\include;$(ProjectDir)\lib\glew\include;$(ProjectDir)\lib\glfw\include;$(ProjectDir)\lib\imgui;$(ProjectDir)\lib\imguizmo_quat;$(ProjectDir)\lib</AdditionalIncludeDirectories>
       <TreatWarningAsError>false</TreatWarningAsError>
       <FloatingPointModel>Fast</FloatingPointModel>
       <DisableSpecificWarnings>4005</DisableSpecificWarnings>
@@ -105,95 +108,107 @@
       <AdditionalLibraryDirectories>$(ProjectDir)\lib\glew\lib;$(ProjectDir)\lib\glfw\lib;$(ProjectDir)\lib\assimp\lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>opengl32.lib;glew32s.lib;glfw3.lib;assimp-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy "$(ProjectDir)\lib\assimp\bin\assimp-vc143-mt.dll" $(OutDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\scene\meshPrimatives.cpp" />
-    <ClCompile Include="src\scene\lighting\spotLight.cpp" />
-    <ClCompile Include="src\scene\lighting\pointLight.cpp" />
-    <ClCompile Include="src\scene\lighting\directionalLight.cpp" />
-    <ClCompile Include="src\scene\lighting\light.cpp" />
-    <ClCompile Include="src\renderer\postprocess\ibl.cpp" />
-    <ClCompile Include="src\input\cameraController.cpp" />
-    <ClCompile Include="src\scene\mesh.cpp" />
-    <ClCompile Include="src\renderer\resources\cubemap.cpp" />
-    <ClCompile Include="src\scene\model.cpp" />
-    <ClCompile Include="src\core\gui.cpp" />
-    <ClCompile Include="src\input\inputManager.cpp" />
-    <ClCompile Include="src\renderer\registers\lightRegistry.cpp" />
-    <ClCompile Include="src\renderer\core\gBuffer.cpp" />
-    <ClCompile Include="src\renderer\resources\loaders\shaderLoader.cpp" />
-    <ClCompile Include="src\scene\lighting\shadowCamera.cpp" />
-    <ClCompile Include="src\scene\lighting\shadowMap.cpp" />
-    <ClCompile Include="src\renderer\resources\shaderPrimatives.cpp" />
-    <ClCompile Include="src\renderer\postprocess\blur.cpp" />
-    <ClCompile Include="src\renderer\core\fbo.cpp" />
-    <ClCompile Include="src\renderer\postprocess\bloom.cpp" />
-    <ClCompile Include="src\renderer\postprocess\fxaa.cpp" />
-    <ClCompile Include="src\renderer\core\context.cpp" />
-    <ClCompile Include="src\renderer\resources\shader.cpp" />
-    <ClCompile Include="src\scene\scene.cpp" />
-    <ClCompile Include="src\scene\sceneManager.cpp" />
-    <ClCompile Include="src\scene\camera.cpp" />
-    <ClCompile Include="src\core\engine.cpp" />
-    <ClCompile Include="src\core\logger.cpp" />
-    <ClCompile Include="src\core\time.cpp" />
-    <ClCompile Include="src\core\window.cpp" />
-    <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\renderer\postprocess\ssao.cpp" />
-    <ClCompile Include="src\renderer\core\vao.cpp" />
-    <ClCompile Include="src\renderer\resources\texture.cpp" />
-    <ClCompile Include="src\renderer\resources\textureAtlas.cpp" />
-    <ClCompile Include="src\renderer\resources\loaders\textureLoader.cpp" />
-    <ClCompile Include="src\renderer\registers\textureRegistry.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="src\renderer\interfaces\shaderSource.hpp" />
-    <ClInclude Include="src\scene\meshPrimatives.hpp" />
-    <ClInclude Include="src\scene\lighting\spotLight.hpp" />
-    <ClInclude Include="src\scene\lighting\pointLight.hpp" />
-    <ClInclude Include="src\scene\lighting\directionalLight.hpp" />
-    <ClInclude Include="src\scene\lighting\light.hpp" />
-    <ClInclude Include="src\renderer\postprocess\ibl.h" />
-    <ClInclude Include="src\input\cameraController.hpp" />
-    <ClInclude Include="src\scene\mesh.hpp" />
-    <ClInclude Include="src\renderer\resources\cubemap.hpp" />
-    <ClInclude Include="src\scene\model.h" />
-    <ClInclude Include="src\input\inputManager.hpp" />
-    <ClInclude Include="src\renderer\interfaces\ViewSource.hpp" />
-    <ClInclude Include="src\renderer\registers\lightRegistry.hpp" />
-    <ClInclude Include="src\renderer\core\gBuffer.hpp" />
-    <ClInclude Include="src\renderer\resources\loaders\shaderLoader.hpp" />
-    <ClInclude Include="src\core\gui.hpp" />
-    <ClInclude Include="src\scene\lighting\shadowCamera.hpp" />
-    <ClInclude Include="src\scene\lighting\shadowMap.hpp" />
-    <ClInclude Include="src\renderer\resources\shaderPrimatives.h" />
-    <ClInclude Include="src\renderer\postprocess\blur.hpp" />
-    <ClInclude Include="src\renderer\core\fbo.hpp" />
-    <ClInclude Include="src\renderer\postprocess\bloom.hpp" />
-    <ClInclude Include="src\renderer\postprocess\fxaa.hpp" />
-    <ClInclude Include="src\renderer\core\context.hpp" />
-    <ClInclude Include="src\renderer\resources\shader.hpp" />
-    <ClInclude Include="src\platform\consoleColor.hpp" />
-    <ClInclude Include="src\renderer\interfaces\UniformSource.hpp" />
-    <ClInclude Include="src\scene\scene.hpp" />
-    <ClInclude Include="src\scene\sceneManager.hpp" />
-    <ClInclude Include="src\scene\camera.hpp" />
-    <ClInclude Include="src\core\engine.hpp" />
-    <ClInclude Include="src\core\logger.hpp" />
-    <ClInclude Include="src\core\time.hpp" />
-    <ClInclude Include="src\core\window.hpp" />
-    <ClInclude Include="src\platform\platform.hpp" />
-    <ClInclude Include="src\utilities\constants.hpp" />
-    <ClInclude Include="src\renderer\postprocess\ssao.hpp" />
-    <ClInclude Include="src\renderer\core\vao.hpp" />
-    <ClInclude Include="src\utilities\random.hpp" />
-    <ClInclude Include="src\renderer\resources\texture.hpp" />
-    <ClInclude Include="src\renderer\resources\textureAtlas.hpp" />
-    <ClInclude Include="src\renderer\resources\loaders\textureLoader.h" />
-    <ClInclude Include="src\renderer\registers\textureRegistry.h" />
-  </ItemGroup>
-  <ItemGroup>
     <Text Include="content\scenes\Intel_Sponza.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="lib\imguizmo_quat\imGuIZMOquat.cpp" />
+    <ClCompile Include="lib\imgui\backends\imgui_impl_glfw.cpp" />
+    <ClCompile Include="lib\imgui\backends\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="lib\imgui\imgui.cpp" />
+    <ClCompile Include="lib\imgui\imgui_demo.cpp" />
+    <ClCompile Include="lib\imgui\imgui_draw.cpp" />
+    <ClCompile Include="lib\imgui\imgui_tables.cpp" />
+    <ClCompile Include="lib\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="src\core\core.cc" />
+    <ClCompile Include="src\core\debug\debug.cc" />
+    <ClCompile Include="src\core\debug\exceptions.cc" />
+    <ClCompile Include="src\core\debug\logger.cpp" />
+    <ClCompile Include="src\core\engine.cpp" />
+    <ClCompile Include="src\core\time.cpp" />
+    <ClCompile Include="src\core\window.cc" />
+    <ClCompile Include="src\main.cc" />
+    <ClCompile Include="src\rendering\core\framebuffer.cc" />
+    <ClCompile Include="src\rendering\core\gBuffer.cc" />
+    <ClCompile Include="src\rendering\core\vertex_array.cc" />
+    <ClCompile Include="src\rendering\postprocess\bloom.cc" />
+    <ClCompile Include="src\rendering\postprocess\blur.cc" />
+    <ClCompile Include="src\rendering\postprocess\fxaa.cc" />
+    <ClCompile Include="src\rendering\postprocess\ibl.cc" />
+    <ClCompile Include="src\rendering\postprocess\ssao.cc" />
+    <ClCompile Include="src\rendering\registers\texture_registry.cc" />
+    <ClCompile Include="src\rendering\resources\cubemap.cc" />
+    <ClCompile Include="src\rendering\resources\loaders\shader_compiler.cc" />
+    <ClCompile Include="src\rendering\resources\loaders\shader_loader.cc" />
+    <ClCompile Include="src\rendering\resources\shader.cc" />
+    <ClCompile Include="src\rendering\resources\shader_primitives.cc" />
+    <ClCompile Include="src\rendering\resources\texture.cc" />
+    <ClCompile Include="src\scene\camera.cc" />
+    <ClCompile Include="src\scene\lighting\light.cc" />
+    <ClCompile Include="src\scene\lighting\shadows.cc" />
+    <ClCompile Include="src\scene\mesh.cc" />
+    <ClCompile Include="src\scene\mesh_primitives.cc" />
+    <ClCompile Include="src\scene\model.cc" />
+    <ClCompile Include="src\utilities\random.cc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="lib\imguizmo_quat\imGuIZMOquat.h" />
+    <ClInclude Include="lib\imguizmo_quat\vgConfig.h" />
+    <ClInclude Include="lib\imguizmo_quat\vGizmo.h" />
+    <ClInclude Include="lib\imguizmo_quat\vGizmoMath.h" />
+    <ClInclude Include="lib\imguizmo_quat\vgMath.h" />
+    <ClInclude Include="lib\imgui\backends\imgui_impl_glfw.h" />
+    <ClInclude Include="lib\imgui\backends\imgui_impl_opengl3.h" />
+    <ClInclude Include="lib\imgui\backends\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="lib\imgui\imconfig.h" />
+    <ClInclude Include="lib\imgui\imgui.h" />
+    <ClInclude Include="lib\imgui\imgui_internal.h" />
+    <ClInclude Include="lib\imgui\imstb_rectpack.h" />
+    <ClInclude Include="lib\imgui\imstb_textedit.h" />
+    <ClInclude Include="lib\imgui\imstb_truetype.h" />
+    <ClInclude Include="lib\nlohmann\json.hpp" />
+    <ClInclude Include="lib\stb_image\stb_image.h" />
+    <ClInclude Include="src\core\core.h" />
+    <ClInclude Include="src\core\debug\debug.h" />
+    <ClInclude Include="src\core\debug\exceptions.h" />
+    <ClInclude Include="src\core\debug\logger.hpp" />
+    <ClInclude Include="src\core\engine.hpp" />
+    <ClInclude Include="src\core\gui.hpp" />
+    <ClInclude Include="src\core\time.hpp" />
+    <ClInclude Include="src\core\window.h" />
+    <ClInclude Include="src\pch.h" />
+    <ClInclude Include="src\platform\consoleColor.hpp" />
+    <ClInclude Include="src\platform\platform.hpp" />
+    <ClInclude Include="src\rendering\core\framebuffer.h" />
+    <ClInclude Include="src\rendering\core\gBuffer.h" />
+    <ClInclude Include="src\rendering\core\vertex_array.h" />
+    <ClInclude Include="src\rendering\interfaces\screen.h" />
+    <ClInclude Include="src\rendering\postprocess\bloom.h" />
+    <ClInclude Include="src\rendering\postprocess\blur.h" />
+    <ClInclude Include="src\rendering\postprocess\fxaa.h" />
+    <ClInclude Include="src\rendering\postprocess\ibl.h" />
+    <ClInclude Include="src\rendering\postprocess\ssao.h" />
+    <ClInclude Include="src\rendering\registers\texture_registry.h" />
+    <ClInclude Include="src\rendering\resources\cubemap.h" />
+    <ClInclude Include="src\rendering\resources\loaders\shader_compiler.h" />
+    <ClInclude Include="src\rendering\resources\loaders\shader_loader.h" />
+    <ClInclude Include="src\rendering\resources\shader.h" />
+    <ClInclude Include="src\rendering\resources\shader_defs.h" />
+    <ClInclude Include="src\rendering\resources\shader_primitives.h" />
+    <ClInclude Include="src\rendering\resources\texture.h" />
+    <ClInclude Include="src\rendering\resources\texture_map.h" />
+    <ClInclude Include="src\scene\camera.h" />
+    <ClInclude Include="src\scene\lighting\light.h" />
+    <ClInclude Include="src\scene\lighting\shadows.h" />
+    <ClInclude Include="src\scene\mesh.h" />
+    <ClInclude Include="src\scene\mesh_primitives.h" />
+    <ClInclude Include="src\scene\model.h" />
+    <ClInclude Include="src\utilities\random.h" />
+    <ClInclude Include="src\utilities\utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

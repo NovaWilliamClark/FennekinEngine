@@ -11,8 +11,8 @@ Time::Time() {
 
 void Time::update() {
     const auto currentTime = std::chrono::high_resolution_clock::now();
-    const std::chrono::duration<float_t> timeSinceStart = currentTime - m_startTime;
-    const std::chrono::duration<float_t> frameTime = currentTime - m_previousTime;
+    const std::chrono::duration<float> timeSinceStart = currentTime - m_startTime;
+    const std::chrono::duration<float> frameTime = currentTime - m_previousTime;
 
     m_deltaTime = frameTime.count();
     m_totalTime = timeSinceStart.count();
@@ -20,11 +20,11 @@ void Time::update() {
     m_previousTime = currentTime;
 }
 
-float_t Time::getDeltaTime() const {
+float Time::getDeltaTime() const {
     return m_deltaTime;
 }
 
-float_t Time::getTotalTime() const {
+float Time::getTotalTime() const {
     return m_totalTime;
 }
 

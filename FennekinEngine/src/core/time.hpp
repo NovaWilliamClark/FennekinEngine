@@ -8,9 +8,9 @@ public:
 
     void update();
 
-    [[nodiscard]] float_t getDeltaTime() const;
+    [[nodiscard]] float getDeltaTime() const;
 
-    [[nodiscard]] float_t getTotalTime() const;
+    [[nodiscard]] float getTotalTime() const;
 
     void startTimer();
 
@@ -27,6 +27,6 @@ private:
     std::chrono::high_resolution_clock::time_point m_startTime;
     std::chrono::high_resolution_clock::time_point m_previousTime;
     std::chrono::high_resolution_clock::time_point m_timerStart;
-    float_t m_deltaTime;
-    float_t m_totalTime;
+    float m_deltaTime;
+    float m_totalTime;
 };

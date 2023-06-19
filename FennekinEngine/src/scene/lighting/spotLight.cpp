@@ -1,1 +1,0 @@
-#include "spotLight.hpp"
