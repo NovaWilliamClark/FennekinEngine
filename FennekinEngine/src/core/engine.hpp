@@ -1,7 +1,7 @@
 #pragma once
-#include "window.h"
+#include "window.hpp"
 #include "core/time.hpp"
-#include "pch.h"
+#include "pch.hpp"
 
 
 class Engine

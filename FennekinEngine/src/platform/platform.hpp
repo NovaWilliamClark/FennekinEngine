@@ -10,7 +10,7 @@
 #undef CRITICAL
 #elif defined(__unix__) || defined(__APPLE__)
 #define PLATFORM_UNIX
-#include <unistd.h>
+#include <unistd.hpp>
 #include <string>
 #define __FILENAME__ (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
 #else

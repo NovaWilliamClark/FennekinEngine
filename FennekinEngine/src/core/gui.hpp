@@ -1,6 +1,6 @@
 #pragma once
-#include "debug/debug.h"
-#include "pch.h"
+#include "debug/debug.hpp"
+#include "pch.hpp"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
