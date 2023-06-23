@@ -7,9 +7,8 @@
 #include <string>
 #include <vector>
 
-class TextureException : public QuarkException {
-    using QuarkException::QuarkException;
-};
+#include "core/debug/logger.hpp"
+
 
 // Texture type.
 enum class ETextureType {
@@ -17,14 +16,14 @@ enum class ETextureType {
     CUBEMAP,
 };
 
-inline GLenum textureTypeToGlTarget(ETextureType type) {
-    switch (type) {
+inline GLenum textureTypeToGlTarget(const ETextureType t_type) {
+    switch (t_type) {
     case ETextureType::TEXTURE_2D:
         return GL_TEXTURE_2D;
     case ETextureType::CUBEMAP:
         return GL_TEXTURE_CUBE_MAP;
     }
-    throw TextureException("ERROR::TEXTURE::INVALID_TEXTURE_TYPE\n" + std::to_string(static_cast<int>(type)));
+    LOG_CRITICAL("Invalid Texture Type");
 }
 
 // The type of texture binding.
@@ -46,7 +45,7 @@ inline ETextureBindType textureTypeToTextureBindType(ETextureType type) {
     case ETextureType::CUBEMAP:
         return ETextureBindType::CUBEMAP;
     }
-    throw TextureException("ERROR::TEXTURE::INVALID_TEXTURE_TYPE\n" + std::to_string(static_cast<int>(type)));
+    LOG_CRITICAL("Invalid Texture Type");
 }
 
 enum class ETextureFiltering {
@@ -60,7 +59,7 @@ enum class ETextureFiltering {
     ANISOTROPIC,
 };
 
-enum class TextureWrapMode {
+enum class ETextureWrapMode {
     REPEAT = 0,
     CLAMP_TO_EDGE,
     CLAMP_TO_BORDER,
@@ -81,7 +80,7 @@ struct TextureParams {
     // flip vertically by default.
     bool flipVerticallyOnLoad = true;
     ETextureFiltering filtering = ETextureFiltering::NEAREST;
-    TextureWrapMode wrapMode = TextureWrapMode::REPEAT;
+    ETextureWrapMode wrapMode = ETextureWrapMode::REPEAT;
     glm::vec4 borderColor = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
     EMipGeneration generateMips = EMipGeneration::ON_LOAD;
     // Maximum number of mips to allocate. If negative, no maximum is used.
@@ -89,49 +88,49 @@ struct TextureParams {
 };
 
 // Returns the number of mips for an image of a given width/height.
-int calculateNumMips(int width, int height);
+int calculateNumMips(int t_width, int t_height);
 
 // Returns the next mip size given an initial size.
-ImageSize calculateNextMip(const ImageSize& mipSize);
+ImageSize calculateNextMip(const ImageSize& t_mipSize);
 
 // Returns the calculated size for a mip level.
-ImageSize calculateMipLevel(int mip0Width, int mip0Height, int level);
+ImageSize calculateMipLevel(int t_mip0Width, int t_mip0Height, int t_level);
 
 class Texture {
 public:
     // Loads a texture from a given path.
     // TODO: Consider putting this in a TextureLoader class.
-    static Texture load(const char* path, bool isSRGB = true);
-    static Texture load(const char* path, bool isSRGB, const TextureParams& params);
+    static Texture load(const char* t_path, bool t_isSrgb = true);
+    static Texture load(const char* t_path, bool t_isSrgb, const TextureParams& t_params);
 
     // Loads an HDR texture from the given path.
-    static Texture loadHdr(const char* path);
-    static Texture loadHdr(const char* path, const TextureParams& params);
+    static Texture loadHdr(const char* t_path);
+    static Texture loadHdr(const char* t_path, const TextureParams& t_params);
 
-    static Texture loadCubemap(std::vector<std::string> faces);
-    static Texture loadCubemap(std::vector<std::string> faces, const TextureParams& params);
+    static Texture loadCubemap(std::vector<std::string> t_faces);
+    static Texture loadCubemap(std::vector<std::string> t_faces, const TextureParams& t_params);
 
 
-    static Texture create(int width, int height, GLenum internalFormat);
-    static Texture create(int width, int height, GLenum internalFormat, const TextureParams& params);
-    static Texture createCubemap(int size, GLenum internalFormat);
-    static Texture createCubemap(int size, GLenum internalFormat, const TextureParams& params);
+    static Texture create(int t_width, int t_height, GLenum t_internalFormat);
+    static Texture create(int t_width, int t_height, GLenum t_internalFormat, const TextureParams& t_params);
+    static Texture createCubemap(int t_size, GLenum t_internalFormat);
+    static Texture createCubemap(int t_size, GLenum t_internalFormat, const TextureParams& t_params);
     // Creates a custom texture based on the given input data.
     // TODO: Change this to take an unsigned char ptr?
-    static Texture createFromData(int width, int height, GLenum internalFormat, const std::vector<glm::vec3>& data);
-    static Texture createFromData(int width, int height, GLenum internalFormat, const std::vector<glm::vec3>& data,
-                                  const TextureParams& params);
+    static Texture createFromData(int t_width, int t_height, GLenum t_internalFormat, const std::vector<glm::vec3>& t_data);
+    static Texture createFromData(int t_width, int t_height, GLenum t_internalFormat, const std::vector<glm::vec3>& t_data,
+                                  const TextureParams& t_params);
 
     // TODO: Replace this with proper RAII.
     void free();
 
-    void bindToUnit(unsigned int textureUnit, ETextureBindType bindType = ETextureBindType::BY_TEXTURE_TYPE);
+    void bindToUnit(unsigned int t_textureUnit, ETextureBindType t_bindType = ETextureBindType::BY_TEXTURE_TYPE);
 
 
-    void generateMips(int maxNumMips = -1);
+    void generateMips(int t_maxNumMips = -1);
 
 
-    void setSamplerMipRange(int min, int max);
+    void setSamplerMipRange(int t_min, int t_max);
     // Resets the allowed mip range to default values.
     void unsetSamplerMipRange();
 
@@ -173,7 +172,7 @@ private:
     GLenum m_internalFormat;
 
     // Applies the given params to the currently-active texture.
-    static void applyParams(const TextureParams& params, ETextureType type = ETextureType::TEXTURE_2D);
+    static void applyParams(const TextureParams& t_params, ETextureType t_type = ETextureType::TEXTURE_2D);
 
     friend class Framebuffer;
     friend class Attachment;

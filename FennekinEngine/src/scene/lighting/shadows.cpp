@@ -1,20 +1,16 @@
 #include "shadows.hpp"
 
 
-ShadowCamera::ShadowCamera(std::shared_ptr<DirectionalLight> light,
-
-                           float cuboidExtents, float near, float far,
-                           float shadowCameraDistanceFromOrigin,
-                           glm::vec3 worldUp)
-    : light_(light),
-      m_cuboidExtents(cuboidExtents),
+ShadowCamera::ShadowCamera(const std::shared_ptr<DirectionalLight>& t_light, const float t_cuboidExtents, float near, float far, const float t_shadowCameraDistanceFromOrigin, const glm::vec3 t_worldUp)
+    : m_light(t_light),
+      m_cuboidExtents(t_cuboidExtents),
       m_near(near),
       m_far(far),
-      m_shadowCameraDistanceFromOrigin(shadowCameraDistanceFromOrigin),
-      m_worldUp(worldUp) {}
+      m_shadowCameraDistanceFromOrigin(t_shadowCameraDistanceFromOrigin),
+      m_worldUp(t_worldUp) {}
 
 glm::mat4 ShadowCamera::getViewTransform() const {
-  return glm::lookAt(m_shadowCameraDistanceFromOrigin * -light_->getDirection(),
+  return glm::lookAt(m_shadowCameraDistanceFromOrigin * -m_light->getDirection(),
                      glm::vec3(0.0f), m_worldUp);
 }
 
@@ -24,26 +20,26 @@ glm::mat4 ShadowCamera::getProjectionTransform() const {
                     m_cuboidExtents, m_near, m_far);
 }
 
-void ShadowCamera::updateUniforms(Shader& shader) {
-  shader.setMat4("lightViewProjection",
+void ShadowCamera::updateUniforms(Shader& t_shader) {
+  t_shader.setMat4("lightViewProjection",
                  getProjectionTransform() * getViewTransform());
 }
 
-ShadowMap::ShadowMap(int width, int height) : Framebuffer(width, height) {
+ShadowMap::ShadowMap(const int t_width, const int t_height) : Framebuffer(t_width, t_height) {
   // Attach the depth texture used for the shadow map.
   // TODO: Support omnidirectional shadow maps.
   m_depthAttachment = attachTexture(
       EBufferType::DEPTH, {
                              .filtering = ETextureFiltering::NEAREST,
-                             .wrapMode = TextureWrapMode::CLAMP_TO_BORDER,
+                             .wrapMode = ETextureWrapMode::CLAMP_TO_BORDER,
                              .borderColor = glm::vec4(1.0f),
                          });
 }
 
-unsigned int ShadowMap::bindTexture(unsigned int nextTextureUnit,
-                                    Shader& shader) {
-  m_depthAttachment.asTexture().bindToUnit(nextTextureUnit);
+unsigned int ShadowMap::bindTexture(const unsigned int t_nextTextureUnit,
+                                    Shader& t_shader) {
+  m_depthAttachment.asTexture().bindToUnit(t_nextTextureUnit);
   // TODO: Make this more generic.
-  shader.setInt("shadowMap", nextTextureUnit);
-  return nextTextureUnit + 1;
+  t_shader.setInt("shadowMap", t_nextTextureUnit);
+  return t_nextTextureUnit + 1;
 }

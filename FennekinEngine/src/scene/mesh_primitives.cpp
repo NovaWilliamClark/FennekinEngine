@@ -1,5 +1,7 @@
 #include "mesh_primitives.hpp"
 
+#include "core/debug/logger.hpp"
+
 
 // clang-format off
 constexpr float planeVertices[] = {
@@ -189,10 +191,10 @@ constexpr float ROOM_VERTICES[] = {
 };
 // clang-format on
 
-RoomMesh::RoomMesh(std::string texturePath) {
+RoomMesh::RoomMesh(std::string t_texturePath) {
   std::vector<TextureMap> textureMaps;
-  if (!texturePath.empty()) {
-      const TextureMap textureMap(Texture::load(texturePath.c_str()),
+  if (!t_texturePath.empty()) {
+      const TextureMap textureMap(Texture::load(t_texturePath.c_str()),
                                   ETextureMapType::DIFFUSE);
     textureMaps.push_back(textureMap);
   }
@@ -222,26 +224,26 @@ void RoomMesh::initializeVertexAttributes() {
   vertexArray.finalizeVertexAttribs();
 }
 
-SphereMesh::SphereMesh(std::string texturePath, int numMeridians,
-                       int numParallels)
-    : numMeridians(numMeridians), numParallels(numParallels) {
+SphereMesh::SphereMesh(std::string t_texturePath, int t_numMeridians,
+                       int t_numParallels)
+    : numMeridians(t_numMeridians), numParallels(t_numParallels) {
   std::vector<TextureMap> textureMaps;
-  if (!texturePath.empty()) {
-      const TextureMap textureMap(Texture::load(texturePath.c_str()),
+  if (!t_texturePath.empty()) {
+      const TextureMap textureMap(Texture::load(t_texturePath.c_str()),
                                   ETextureMapType::DIFFUSE);
     textureMaps.push_back(textureMap);
   }
   loadMeshAndTextures(textureMaps);
 }
 
-SphereMesh::SphereMesh(const std::vector<TextureMap>& textureMaps,
-                       int numMeridians, int numParallels)
-    : numMeridians(numMeridians), numParallels(numParallels) {
-  loadMeshAndTextures(textureMaps);
+SphereMesh::SphereMesh(const std::vector<TextureMap>& t_textureMaps,
+                       int t_numMeridians, int t_numParallels)
+    : numMeridians(t_numMeridians), numParallels(t_numParallels) {
+  loadMeshAndTextures(t_textureMaps);
 }
 
 void SphereMesh::loadMeshAndTextures(
-    const std::vector<TextureMap>& textureMaps) {
+    const std::vector<TextureMap>& t_textureMaps) {
   // Generate the sphere vertex components. This uses the common "UV" approach.
 
   constexpr auto PI = glm::pi<float>();
@@ -323,7 +325,7 @@ void SphereMesh::loadMeshAndTextures(
   constexpr unsigned int sphereVertexSizeBytes = 11 * sizeof(float);
   loadMeshData(vertexData.data(),
                (sizeof(float) * vertexData.size()) / sphereVertexSizeBytes,
-               sphereVertexSizeBytes, indices, textureMaps);
+               sphereVertexSizeBytes, indices, t_textureMaps);
 }
 
 void SphereMesh::initializeVertexAttributes() {
@@ -388,27 +390,25 @@ constexpr float SKYBOX_VERTICES[] = {
 
 SkyboxMesh::SkyboxMesh() { loadMesh(); }
 
-SkyboxMesh::SkyboxMesh(std::vector<std::string> faces)
-    : SkyboxMesh(Texture::loadCubemap(faces)) {}
+SkyboxMesh::SkyboxMesh(std::vector<std::string> t_faces)
+    : SkyboxMesh(Texture::loadCubemap(t_faces)) {}
 
-SkyboxMesh::SkyboxMesh(Texture texture) {
+SkyboxMesh::SkyboxMesh(Texture t_texture) {
   loadMesh();
-  setTexture(texture);
+  setTexture(t_texture);
 }
 
-void SkyboxMesh::setTexture(Attachment attachment) {
-  setTexture(attachment.asTexture());
+void SkyboxMesh::setTexture(Attachment t_attachment) {
+  setTexture(t_attachment.asTexture());
 }
 
-void SkyboxMesh::setTexture(Texture texture) {
-  if (texture.getType() != ETextureType::CUBEMAP) {
-    throw MeshPrimitiveException(
-        "ERROR::MESH_PRIMITIVE::INVALID_TEXTURE_TYPE\n" +
-        std::to_string(static_cast<int>(texture.getType())));
+void SkyboxMesh::setTexture(Texture t_texture) {
+  if (t_texture.getType() != ETextureType::CUBEMAP) {
+    LOG_CRITICAL("Mesh Primative, Invalid Texture Type");
   }
   // TODO: This copies the texture info, meaning it won't see updates.
   textureMaps.clear();
-  textureMaps.emplace_back(texture, ETextureMapType::CUBEMAP);
+  textureMaps.emplace_back(t_texture, ETextureMapType::CUBEMAP);
 }
 
 void SkyboxMesh::loadMesh() {
@@ -438,9 +438,9 @@ constexpr float screenQuadVertices[] = {
 
 ScreenQuadMesh::ScreenQuadMesh() { loadMesh(); }
 
-ScreenQuadMesh::ScreenQuadMesh(Texture texture) {
+ScreenQuadMesh::ScreenQuadMesh(Texture t_texture) {
   loadMesh();
-  setTexture(texture);
+  setTexture(t_texture);
 }
 
 void ScreenQuadMesh::loadMesh() {
@@ -450,14 +450,14 @@ void ScreenQuadMesh::loadMesh() {
                quadVertexSizeBytes, /*indices=*/{}, /*textureMaps=*/{});
 }
 
-void ScreenQuadMesh::setTexture(Attachment attachment) {
-  setTexture(attachment.asTexture());
+void ScreenQuadMesh::setTexture(Attachment t_attachment) {
+  setTexture(t_attachment.asTexture());
 }
 
-void ScreenQuadMesh::setTexture(Texture texture) {
+void ScreenQuadMesh::setTexture(Texture t_texture) {
   // TODO: This copies the texture info, meaning it won't see updates.
   textureMaps.clear();
-  textureMaps.emplace_back(texture, ETextureMapType::DIFFUSE);
+  textureMaps.emplace_back(t_texture, ETextureMapType::DIFFUSE);
 }
 
 void ScreenQuadMesh::unsetTexture() { textureMaps.clear(); }
@@ -470,8 +470,8 @@ void ScreenQuadMesh::initializeVertexAttributes() {
   vertexArray.finalizeVertexAttribs();
 }
 
-void ScreenQuadMesh::bindTextures(Shader& shader,
-                                  TextureRegistry* textureRegistry) {
+void ScreenQuadMesh::bindTextures(Shader& t_shader,
+                                  TextureRegistry* t_textureRegistry) {
   if (textureMaps.empty()) {
     return;
   }
@@ -479,17 +479,17 @@ void ScreenQuadMesh::bindTextures(Shader& shader,
   // Bind textures, assuming a given uniform naming.
   // If a TextureRegistry isn't provided, just start with texture unit 0.
   unsigned int textureUnit = 0;
-  if (textureRegistry != nullptr) {
-    textureRegistry->pushUsageBlock();
-    textureUnit = textureRegistry->getNextTextureUnit();
+  if (t_textureRegistry != nullptr) {
+    t_textureRegistry->pushUsageBlock();
+    textureUnit = t_textureRegistry->getNextTextureUnit();
   }
 
   Texture& texture = textureMaps[0].getTexture();
   texture.bindToUnit(textureUnit, ETextureBindType::TEXTURE_2D);
 
   // Set the sampler to the correct texture unit.
-  shader.setInt("fnk_screenTexture", textureUnit);
-  if (textureRegistry != nullptr) {
-    textureRegistry->popUsageBlock();
+  t_shader.setInt("fnk_screenTexture", textureUnit);
+  if (t_textureRegistry != nullptr) {
+    t_textureRegistry->popUsageBlock();
   }
 }

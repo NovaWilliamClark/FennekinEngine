@@ -7,10 +7,6 @@
 
 #include "scene/mesh_primitives.hpp"
 
-class CubemapException : public QuarkException {
-  using QuarkException::QuarkException;
-};
-
 // A helper for rendering to a cubemap texture in a framebuffer. The passed-in
 // framebuffer must outlive the life of this helper.
 class CubemapRenderHelper {

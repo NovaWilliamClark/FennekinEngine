@@ -10,9 +10,6 @@
 #include <glm/glm.hpp>
 #include <vector>
 
-class SsaoException : public QuarkException {
-  using QuarkException::QuarkException;
-};
 
 // A shader that calculates SSAO based on a G-Buffer and SSAO kernel.
 class SsaoShader : public Shader {

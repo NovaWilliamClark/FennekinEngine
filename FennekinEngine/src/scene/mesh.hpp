@@ -44,8 +44,8 @@ class Renderable {
 class RenderableNode : public Renderable {
  public:
     ~RenderableNode() override = default;
-  void drawWithTransform(const glm::mat4& transform, Shader& shader,
-                         TextureRegistry* textureRegistry = nullptr) override;
+  void drawWithTransform(const glm::mat4& t_transform, Shader& t_shader,
+                         TextureRegistry* t_textureRegistry = nullptr) override;
 
   void addRenderable(std::unique_ptr<Renderable> renderable) {
     renderables.push_back(std::move(renderable));
@@ -55,7 +55,7 @@ class RenderableNode : public Renderable {
     childNodes.push_back(std::move(childNode));
   }
 
-  void visitRenderables(std::function<void(Renderable*)> visitor);
+  void visitRenderables(const std::function<void(Renderable*)>& t_visitor) const;
 
  protected:
   // The set of Renderables making up this node.
@@ -70,10 +70,10 @@ class Mesh : public Renderable {
  public:
     ~Mesh() override = default;
 
-  void loadInstanceModels(const std::vector<glm::mat4>& models);
-  void loadInstanceModels(const glm::mat4* models, unsigned int size);
-  void drawWithTransform(const glm::mat4& transform, Shader& shader,
-                         TextureRegistry* textureRegistry = nullptr) override;
+  void loadInstanceModels(const std::vector<glm::mat4>& t_models);
+  void loadInstanceModels(const glm::mat4* t_models, unsigned int t_size);
+  void drawWithTransform(const glm::mat4& t_transform, Shader& t_shader,
+                         TextureRegistry* t_textureRegistry = nullptr) override;
 
   std::vector<unsigned int> getIndices() { return indices; }
   std::vector<TextureMap> getTextureMaps() { return textureMaps; }
@@ -92,7 +92,7 @@ class Mesh : public Renderable {
   // Allocates and initializes vertex array instance data.
   virtual void initializeVertexArrayInstanceData();
   // Binds texture maps to texture units and sets shader sampler uniforms.
-  virtual void bindTextures(Shader& shader, TextureRegistry* textureRegistry);
+  virtual void bindTextures(Shader& t_shader, TextureRegistry* t_textureRegistry);
   // Emits glDraw* calls based on the mesh instancing/indexing. Requires shaders
   // and VAOs to be active prior to calling.
   virtual void glDraw();

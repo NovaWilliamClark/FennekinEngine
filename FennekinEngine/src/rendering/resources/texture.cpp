@@ -5,45 +5,45 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
-int calculateNumMips(int width, int height) {
-  return 1 + static_cast<int>(std::floor(std::log2(std::max(width, height))));
+int calculateNumMips(int t_width, int t_height) {
+  return 1 + static_cast<int>(std::floor(std::log2(std::max(t_width, t_height))));
 }
 
-ImageSize calculateNextMip(const ImageSize& mipSize) {
-  return ImageSize{.width = std::max(mipSize.width / 2, 1),
-                   .height = std::max(mipSize.height / 2, 1)};
+ImageSize calculateNextMip(const ImageSize& t_mipSize) {
+  return ImageSize{.width = std::max(t_mipSize.width / 2, 1),
+                   .height = std::max(t_mipSize.height / 2, 1)};
 }
 
-ImageSize calculateMipLevel(int mip0Width, int mip0Height, int level) {
-  ImageSize size = {mip0Width, mip0Height};
-  if (level == 0) {
+ImageSize calculateMipLevel(int t_mip0Width, int t_mip0Height, int t_level) {
+  ImageSize size = {t_mip0Width, t_mip0Height};
+  if (t_level == 0) {
     return size;
   }
-  for (int mip = 0; mip < level; ++mip) {
+  for (int mip = 0; mip < t_level; ++mip) {
     size = calculateNextMip(size);
   }
   return size;
 }
 
-Texture Texture::load(const char* path, bool isSRGB) {
+Texture Texture::load(const char* t_path, bool t_isSrgb) {
   TextureParams params = {.filtering = ETextureFiltering::ANISOTROPIC,
-                          .wrapMode = TextureWrapMode::REPEAT};
-  return load(path, isSRGB, params);
+                          .wrapMode = ETextureWrapMode::REPEAT};
+  return load(t_path, t_isSrgb, params);
 }
 
-Texture Texture::load(const char* path, bool isSRGB,
-                      const TextureParams& params) {
+Texture Texture::load(const char* t_path, bool t_isSrgb,
+                      const TextureParams& t_params) {
   Texture texture;
   texture.m_type = ETextureType::TEXTURE_2D;
 
-  stbi_set_flip_vertically_on_load(params.flipVerticallyOnLoad);
+  stbi_set_flip_vertically_on_load(t_params.flipVerticallyOnLoad);
   unsigned char* data =
-      stbi_load(path, &texture.m_width, &texture.m_height, &texture.m_numChannels,
+      stbi_load(t_path, &texture.m_width, &texture.m_height, &texture.m_numChannels,
                 /*desired_channels=*/0);
 
   if (data == nullptr) {
     stbi_image_free(data);
-    throw TextureException("ERROR::TEXTURE::LOAD_FAILED\n" + std::string(path));
+    LOG_CRITICAL("ERROR::TEXTURE::LOAD_FAILED\n" + std::string(t_path));
   }
 
   GLenum dataFormat;
@@ -54,17 +54,17 @@ Texture Texture::load(const char* path, bool isSRGB,
     texture.m_internalFormat = GL_RG8;
     dataFormat = GL_RG;
   } else if (texture.m_numChannels == 3) {
-    texture.m_internalFormat = isSRGB ? GL_SRGB8 : GL_RGB8;
+    texture.m_internalFormat = t_isSrgb ? GL_SRGB8 : GL_RGB8;
     dataFormat = GL_RGB;
   } else if (texture.m_numChannels == 4) {
-    texture.m_internalFormat = isSRGB ? GL_SRGB8_ALPHA8 : GL_RGBA8;
+    texture.m_internalFormat = t_isSrgb ? GL_SRGB8_ALPHA8 : GL_RGBA8;
     dataFormat = GL_RGBA;
   } else {
     stbi_image_free(data);
-    throw TextureException(
+    LOG_CRITICAL(
         "ERROR::TEXTURE::UNSUPPORTED_TEXTURE_FORMAT\n"
         "Texture '" +
-        std::string(path) + "' contained unsupported number of channels: " +
+        std::string(t_path) + "' contained unsupported number of channels: " +
         std::to_string(texture.m_numChannels));
   }
 
@@ -75,7 +75,7 @@ Texture Texture::load(const char* path, bool isSRGB,
   glTexImage2D(GL_TEXTURE_2D, /* mipmap level */ 0, texture.m_internalFormat,
                texture.m_width, texture.m_height, 0,
                /* tex data format */ dataFormat, GL_UNSIGNED_BYTE, data);
-  if (params.generateMips >= EMipGeneration::ON_LOAD) {
+  if (t_params.generateMips >= EMipGeneration::ON_LOAD) {
     glGenerateMipmap(GL_TEXTURE_2D);
     texture.m_numMips = calculateNumMips(texture.m_width, texture.m_height);
     // TODO: Take into account params.maxNumMips
@@ -84,31 +84,31 @@ Texture Texture::load(const char* path, bool isSRGB,
   }
 
   // Set texture-wrapping/filtering options.
-  applyParams(params, texture.m_type);
+  applyParams(t_params, texture.m_type);
 
   stbi_image_free(data);
 
   return texture;
 }
 
-Texture Texture::loadHdr(const char* path) {
+Texture Texture::loadHdr(const char* t_path) {
   TextureParams params = {.filtering = ETextureFiltering::BILINEAR,
-                          .wrapMode = TextureWrapMode::CLAMP_TO_EDGE};
-  return loadHdr(path, params);
+                          .wrapMode = ETextureWrapMode::CLAMP_TO_EDGE};
+  return loadHdr(t_path, params);
 }
 
-Texture Texture::loadHdr(const char* path, const TextureParams& params) {
+Texture Texture::loadHdr(const char* t_path, const TextureParams& t_params) {
   Texture texture;
   texture.m_type = ETextureType::TEXTURE_2D;
   texture.m_numMips = 1;
 
   stbi_set_flip_vertically_on_load(true);
-  float* data = stbi_loadf(path, &texture.m_width, &texture.m_height,
+  float* data = stbi_loadf(t_path, &texture.m_width, &texture.m_height,
                            &texture.m_numChannels, /*desired_channels=*/0);
 
   if (data == nullptr) {
     stbi_image_free(data);
-    throw TextureException("ERROR::TEXTURE::LOAD_FAILED\n" + std::string(path));
+    LOG_CRITICAL("ERROR::TEXTURE::LOAD_FAILED\n" + std::string(t_path));
   }
 
   GLenum dataFormat;
@@ -126,10 +126,10 @@ Texture Texture::loadHdr(const char* path, const TextureParams& params) {
     dataFormat = GL_RGBA;
   } else {
     stbi_image_free(data);
-    throw TextureException(
+    LOG_CRITICAL(
         "ERROR::TEXTURE::UNSUPPORTED_TEXTURE_FORMAT\n"
         "Texture '" +
-        std::string(path) + "' contained unsupported number of channels: " +
+        std::string(t_path) + "' contained unsupported number of channels: " +
         std::to_string(texture.m_numChannels));
   }
 
@@ -142,23 +142,23 @@ Texture Texture::loadHdr(const char* path, const TextureParams& params) {
                /*tex data format=*/dataFormat, GL_FLOAT, data);
 
   // Set texture-wrapping/filtering options.
-  applyParams(params, texture.m_type);
+  applyParams(t_params, texture.m_type);
 
   stbi_image_free(data);
 
   return texture;
 }
 
-Texture Texture::loadCubemap(std::vector<std::string> faces) {
+Texture Texture::loadCubemap(std::vector<std::string> t_faces) {
   TextureParams params = {.filtering = ETextureFiltering::BILINEAR,
-                          .wrapMode = TextureWrapMode::CLAMP_TO_EDGE};
-  return loadCubemap(faces, params);
+                          .wrapMode = ETextureWrapMode::CLAMP_TO_EDGE};
+  return loadCubemap(t_faces, params);
 }
 
-Texture Texture::loadCubemap(std::vector<std::string> faces,
-                             const TextureParams& params) {
-  if (faces.size() != 6) {
-    throw TextureException(
+Texture Texture::loadCubemap(std::vector<std::string> t_faces,
+                             const TextureParams& t_params) {
+  if (t_faces.size() != 6) {
+    LOG_CRITICAL(
         "ERROR::TEXTURE::INVALID_ARGUMENT\nMust pass exactly 6 faces to "
         "loadCubemap");
   }
@@ -173,37 +173,37 @@ Texture Texture::loadCubemap(std::vector<std::string> faces,
 
   int width, height, numChannels;
   bool initialized = false;
-  for (unsigned int i = 0; i < faces.size(); i++) {
-    unsigned char* data = stbi_load(faces[i].c_str(), &width, &height,
+  for (unsigned int i = 0; i < t_faces.size(); i++) {
+    unsigned char* data = stbi_load(t_faces[i].c_str(), &width, &height,
                                     &numChannels, /*desired_channels=*/0);
     // Error handling.
     if (data == nullptr) {
       stbi_image_free(data);
-      throw TextureException("ERROR::TEXTURE::LOAD_FAILED\n" + faces[i]);
+      LOG_CRITICAL("ERROR::TEXTURE::LOAD_FAILED\n" + t_faces[i]);
     }
     if (numChannels != 3) {
       stbi_image_free(data);
-      throw TextureException(
+      LOG_CRITICAL(
           "ERROR::TEXTURE::UNSUPPORTED_TEXTURE_FORMAT\n"
           "Cubemap texture '" +
-          faces[i] + "' contained unsupported number of channels: " +
+          t_faces[i] + "' contained unsupported number of channels: " +
           std::to_string(numChannels));
     }
     if (!initialized) {
       if (width != height) {
-        throw TextureException(
+        LOG_CRITICAL(
             "ERROR::TEXTURE::INVALID_TEXTURE_SIZE\n"
             "Cubemap texture '" +
-            faces[i] + "' was not square");
+            t_faces[i] + "' was not square");
       }
       texture.m_width = width;
       texture.m_height = height;
       texture.m_numChannels = numChannels;
     } else if (width != texture.m_width || height != texture.m_height) {
-      throw TextureException(
+      LOG_CRITICAL(
           "ERROR::TEXTURE::INVALID_TEXTURE_SIZE\n"
           "Cubemap texture '" +
-          faces[i] + "' was a different size than the first face");
+          t_faces[i] + "' was a different size than the first face");
     }
 
     // Load into the next cube map texture position.
@@ -214,32 +214,32 @@ Texture Texture::loadCubemap(std::vector<std::string> faces,
     stbi_image_free(data);
   }
 
-  applyParams(params, texture.m_type);
+  applyParams(t_params, texture.m_type);
 
   return texture;
 }
 
-Texture Texture::create(int width, int height, GLenum internalFormat) {
+Texture Texture::create(int t_width, int t_height, GLenum t_internalFormat) {
   TextureParams params = {.filtering = ETextureFiltering::BILINEAR,
-                          .wrapMode = TextureWrapMode::CLAMP_TO_EDGE};
-  return create(width, height, internalFormat, params);
+                          .wrapMode = ETextureWrapMode::CLAMP_TO_EDGE};
+  return create(t_width, t_height, t_internalFormat, params);
 }
 
-Texture Texture::create(int width, int height, GLenum internalFormat,
-                        const TextureParams& params) {
+Texture Texture::create(int t_width, int t_height, GLenum t_internalFormat,
+                        const TextureParams& t_params) {
   Texture texture;
   texture.m_type = ETextureType::TEXTURE_2D;
-  texture.m_width = width;
-  texture.m_height = height;
+  texture.m_width = t_width;
+  texture.m_height = t_height;
   texture.m_numChannels = 0;  // Default.
   texture.m_numMips = 1;
-  if (params.generateMips == EMipGeneration::ALWAYS) {
+  if (t_params.generateMips == EMipGeneration::ALWAYS) {
     texture.m_numMips = calculateNumMips(texture.m_width, texture.m_height);
-    if (params.maxNumMips >= 0) {
-      texture.m_numMips = std::min(texture.m_numMips, params.maxNumMips);
+    if (t_params.maxNumMips >= 0) {
+      texture.m_numMips = std::min(texture.m_numMips, t_params.maxNumMips);
     }
   }
-  texture.m_internalFormat = internalFormat;
+  texture.m_internalFormat = t_internalFormat;
 
   glGenTextures(1, &texture.m_id);
   glBindTexture(GL_TEXTURE_2D, texture.m_id);
@@ -248,32 +248,32 @@ Texture Texture::create(int width, int height, GLenum internalFormat,
                  texture.m_width, texture.m_height);
 
   // Set texture-wrapping/filtering options.
-  applyParams(params, texture.m_type);
+  applyParams(t_params, texture.m_type);
 
   return texture;
 }
 
-Texture Texture::createCubemap(int size, GLenum internalFormat) {
+Texture Texture::createCubemap(int t_size, GLenum t_internalFormat) {
   TextureParams params = {.filtering = ETextureFiltering::BILINEAR,
-                          .wrapMode = TextureWrapMode::CLAMP_TO_EDGE};
-  return createCubemap(size, internalFormat, params);
+                          .wrapMode = ETextureWrapMode::CLAMP_TO_EDGE};
+  return createCubemap(t_size, t_internalFormat, params);
 }
 
-Texture Texture::createCubemap(int size, GLenum internalFormat,
-                               const TextureParams& params) {
+Texture Texture::createCubemap(int t_size, GLenum t_internalFormat,
+                               const TextureParams& t_params) {
   Texture texture;
   texture.m_type = ETextureType::CUBEMAP;
-  texture.m_width = size;
-  texture.m_height = size;
+  texture.m_width = t_size;
+  texture.m_height = t_size;
   texture.m_numChannels = 0;  // Default.
   texture.m_numMips = 1;
-  if (params.generateMips == EMipGeneration::ALWAYS) {
+  if (t_params.generateMips == EMipGeneration::ALWAYS) {
     texture.m_numMips = calculateNumMips(texture.m_width, texture.m_height);
-    if (params.maxNumMips >= 0) {
-      texture.m_numMips = std::min(texture.m_numMips, params.maxNumMips);
+    if (t_params.maxNumMips >= 0) {
+      texture.m_numMips = std::min(texture.m_numMips, t_params.maxNumMips);
     }
   }
-  texture.m_internalFormat = internalFormat;
+  texture.m_internalFormat = t_internalFormat;
 
   glGenTextures(1, &texture.m_id);
   glBindTexture(GL_TEXTURE_CUBE_MAP, texture.m_id);
@@ -281,42 +281,42 @@ Texture Texture::createCubemap(int size, GLenum internalFormat,
   glTexStorage2D(GL_TEXTURE_CUBE_MAP, texture.m_numMips, texture.m_internalFormat,
                  texture.m_width, texture.m_height);
 
-  applyParams(params, texture.m_type);
+  applyParams(t_params, texture.m_type);
 
   return texture;
 }
 
-Texture Texture::createFromData(int width, int height, GLenum internalFormat,
-                                const std::vector<glm::vec3>& data) {
+Texture Texture::createFromData(int t_width, int t_height, GLenum t_internalFormat,
+                                const std::vector<glm::vec3>& t_data) {
   TextureParams params = {.filtering = ETextureFiltering::BILINEAR,
-                          .wrapMode = TextureWrapMode::CLAMP_TO_EDGE};
-  return createFromData(width, height, internalFormat, data, params);
+                          .wrapMode = ETextureWrapMode::CLAMP_TO_EDGE};
+  return createFromData(t_width, t_height, t_internalFormat, t_data, params);
 }
 
-Texture Texture::createFromData(int width, int height, GLenum internalFormat,
-                                const std::vector<glm::vec3>& data,
-                                const TextureParams& params) {
-  if (data.size() != (width * height)) {
-    throw TextureException("ERROR::TEXTURE::INVALID_DATA_SIZE");
+Texture Texture::createFromData(int t_width, int t_height, GLenum t_internalFormat,
+                                const std::vector<glm::vec3>& t_data,
+                                const TextureParams& t_params) {
+  if (t_data.size() != (t_width * t_height)) {
+    LOG_CRITICAL("ERROR::TEXTURE::INVALID_DATA_SIZE");
   }
 
-  Texture texture = Texture::create(width, height, internalFormat, params);
+  Texture texture = Texture::create(t_width, t_height, t_internalFormat, t_params);
   // Upload the data.
   glTexSubImage2D(GL_TEXTURE_2D, /*level=*/0, /*xoffset=*/0,
                   /*yoffset=*/0, texture.m_width, texture.m_height,
-                  /*format=*/GL_RGB, GL_FLOAT, data.data());
+                  /*format=*/GL_RGB, GL_FLOAT, t_data.data());
   return texture;
 }
 
-void Texture::bindToUnit(unsigned int textureUnit, ETextureBindType bindType) {
+void Texture::bindToUnit(unsigned int t_textureUnit, ETextureBindType t_bindType) {
   // TODO: Take into account GL_MAX_TEXTURE_UNITS here.
-  glActiveTexture(GL_TEXTURE0 + textureUnit);
+  glActiveTexture(GL_TEXTURE0 + t_textureUnit);
 
-  if (bindType == ETextureBindType::BY_TEXTURE_TYPE) {
-    bindType = textureTypeToTextureBindType(m_type);
+  if (t_bindType == ETextureBindType::BY_TEXTURE_TYPE) {
+    t_bindType = textureTypeToTextureBindType(m_type);
   }
 
-  switch (bindType) {
+  switch (t_bindType) {
     case ETextureBindType::TEXTURE_2D:
       glBindTexture(GL_TEXTURE_2D, m_id);
       break;
@@ -325,20 +325,20 @@ void Texture::bindToUnit(unsigned int textureUnit, ETextureBindType bindType) {
       break;
     case ETextureBindType::IMAGE_TEXTURE:
       // Bind image unit.
-      glBindImageTexture(textureUnit, m_id, /*level=*/0, /*layered=*/GL_FALSE, 0,
+      glBindImageTexture(t_textureUnit, m_id, /*level=*/0, /*layered=*/GL_FALSE, 0,
                          GL_READ_WRITE, m_internalFormat);
       break;
     default:
-      throw TextureException("ERROR::TEXTURE::INVALID_TEXTURE_BIND_TYPE\n" +
-                             std::to_string(static_cast<int>(bindType)));
+      LOG_CRITICAL("ERROR::TEXTURE::INVALID_TEXTURE_BIND_TYPE\n" +
+                             std::to_string(static_cast<int>(t_bindType)));
   }
 }
 
-void Texture::setSamplerMipRange(int min, int max) {
+void Texture::setSamplerMipRange(int t_min, int t_max) {
   GLenum target = textureTypeToGlTarget(m_type);
   glBindTexture(target, m_id);
-  glTexParameteri(target, GL_TEXTURE_BASE_LEVEL, min);
-  glTexParameteri(target, GL_TEXTURE_MAX_LEVEL, max);
+  glTexParameteri(target, GL_TEXTURE_BASE_LEVEL, t_min);
+  glTexParameteri(target, GL_TEXTURE_MAX_LEVEL, t_max);
 }
 
 void Texture::unsetSamplerMipRange() {
@@ -348,24 +348,24 @@ void Texture::unsetSamplerMipRange() {
 
 void Texture::free() { glDeleteTextures(1, &m_id); }
 
-void Texture::generateMips(int maxNumMips) {
-  if (maxNumMips >= 0) {
-    setSamplerMipRange(0, maxNumMips);
+void Texture::generateMips(int t_maxNumMips) {
+  if (t_maxNumMips >= 0) {
+    setSamplerMipRange(0, t_maxNumMips);
   }
 
   GLenum target = textureTypeToGlTarget(m_type);
   glBindTexture(target, m_id);
   glGenerateMipmap(target);
 
-  if (maxNumMips >= 0) {
+  if (t_maxNumMips >= 0) {
     unsetSamplerMipRange();
   }
 }
 
-void Texture::applyParams(const TextureParams& params, ETextureType type) {
-  GLenum target = textureTypeToGlTarget(type);
+void Texture::applyParams(const TextureParams& t_params, ETextureType t_type) {
+  GLenum target = textureTypeToGlTarget(t_type);
 
-  switch (params.filtering) {
+  switch (t_params.filtering) {
     case ETextureFiltering::NEAREST:
       glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
       glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -378,7 +378,7 @@ void Texture::applyParams(const TextureParams& params, ETextureType type) {
     case ETextureFiltering::ANISOTROPIC:
       glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
       glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-      if (params.filtering == ETextureFiltering::ANISOTROPIC) {
+      if (t_params.filtering == ETextureFiltering::ANISOTROPIC) {
         constexpr float MAX_ANISOTROPY_SAMPLES = 4.0f;
         glTexParameterf(target, GL_TEXTURE_MAX_ANISOTROPY,
                         MAX_ANISOTROPY_SAMPLES);
@@ -386,29 +386,29 @@ void Texture::applyParams(const TextureParams& params, ETextureType type) {
       break;
   }
 
-  switch (params.wrapMode) {
-    case TextureWrapMode::REPEAT:
+  switch (t_params.wrapMode) {
+    case ETextureWrapMode::REPEAT:
       glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_REPEAT);
       glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_REPEAT);
-      if (type == ETextureType::CUBEMAP) {
+      if (t_type == ETextureType::CUBEMAP) {
         glTexParameteri(target, GL_TEXTURE_WRAP_R, GL_REPEAT);
       }
       break;
-    case TextureWrapMode::CLAMP_TO_EDGE:
+    case ETextureWrapMode::CLAMP_TO_EDGE:
       glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
       glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-      if (type == ETextureType::CUBEMAP) {
+      if (t_type == ETextureType::CUBEMAP) {
         glTexParameteri(target, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
       }
       break;
-    case TextureWrapMode::CLAMP_TO_BORDER:
+    case ETextureWrapMode::CLAMP_TO_BORDER:
       glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
       glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-      if (type == ETextureType::CUBEMAP) {
+      if (t_type == ETextureType::CUBEMAP) {
         glTexParameteri(target, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_BORDER);
       }
       glTexParameterfv(target, GL_TEXTURE_BORDER_COLOR,
-                       glm::value_ptr(params.borderColor));
+                       glm::value_ptr(t_params.borderColor));
       break;
   }
 }

@@ -5,7 +5,7 @@
 
 /** Core lighting structs and functions. */
 
-struct QrkAttenuation {
+struct FnkAttenuation {
   float constant;
   float linear;
   float quadratic;
@@ -35,7 +35,7 @@ struct QrkAttenuation {
 #define fnk_MAX_EMISSION_TEXTURES 1
 #endif
 
-struct QrkMaterial {
+struct FnkMaterial {
   // Material maps. Standard lighting logic only uses a single map, but
   // multiple maps are available in case user code wants to do something fancy.
 
@@ -70,26 +70,26 @@ struct QrkMaterial {
   float shininess;
 
   // TODO: Add emissionFactor.
-  QrkAttenuation emissionAttenuation;
+  FnkAttenuation emissionAttenuation;
 };
 
-struct QrkDirectionalLight {
+struct FnkDirectionalLight {
   vec3 direction;
 
   vec3 diffuse;
   vec3 specular;
 };
 
-struct QrkPointLight {
+struct FnkPointLight {
   vec3 position;
 
   vec3 diffuse;
   vec3 specular;
 
-  QrkAttenuation attenuation;
+  FnkAttenuation attenuation;
 };
 
-struct QrkSpotLight {
+struct FnkSpotLight {
   vec3 position;
   vec3 direction;
   float innerAngle;
@@ -98,11 +98,11 @@ struct QrkSpotLight {
   vec3 diffuse;
   vec3 specular;
 
-  QrkAttenuation attenuation;
+  FnkAttenuation attenuation;
 };
 
 /** Extracts albedo from the material. */
-vec3 fnk_extractAlbedo(QrkMaterial material, vec2 texCoords) {
+vec3 fnk_extractAlbedo(FnkMaterial material, vec2 texCoords) {
   vec3 albedo = vec3(0.0);
   if (material.diffuseCount > 0) {
     albedo = texture(material.diffuseMaps[0], texCoords).rgb;
@@ -111,7 +111,7 @@ vec3 fnk_extractAlbedo(QrkMaterial material, vec2 texCoords) {
 }
 
 /** Extracts specular from the material. */
-vec3 fnk_extractSpecular(QrkMaterial material, vec2 texCoords) {
+vec3 fnk_extractSpecular(FnkMaterial material, vec2 texCoords) {
   // In the absence of a specular map, we just calculate a half specular
   // component.
   vec3 specular = vec3(0.5);
@@ -125,7 +125,7 @@ vec3 fnk_extractSpecular(QrkMaterial material, vec2 texCoords) {
 }
 
 /** Extracts roughness from the material. */
-float fnk_extractRoughness(QrkMaterial material, vec2 texCoords) {
+float fnk_extractRoughness(FnkMaterial material, vec2 texCoords) {
   float roughness = 0.5;
   if (material.roughnessCount > 0) {
     if (material.roughnessIsPacked[0]) {
@@ -141,7 +141,7 @@ float fnk_extractRoughness(QrkMaterial material, vec2 texCoords) {
 }
 
 /** Extracts metallic from the material. */
-float fnk_extractMetallic(QrkMaterial material, vec2 texCoords) {
+float fnk_extractMetallic(FnkMaterial material, vec2 texCoords) {
   float metallic = 0.0;
   if (material.metallicCount > 0) {
     if (material.metallicIsPacked[0]) {
@@ -160,7 +160,7 @@ float fnk_extractMetallic(QrkMaterial material, vec2 texCoords) {
  * directly multiplied with lighting, with 0 == fully occluded, and 1 == not at
  * all occluded.
  */
-float fnk_extractAmbientOcclusion(QrkMaterial material, vec2 texCoords) {
+float fnk_extractAmbientOcclusion(FnkMaterial material, vec2 texCoords) {
   float ao = 1.0;
   if (material.aoCount > 0) {
     // We could check `material.aoIsPacked[0]` here, but even in packed textures
@@ -171,7 +171,7 @@ float fnk_extractAmbientOcclusion(QrkMaterial material, vec2 texCoords) {
 }
 
 /** Extracts emission from the material. */
-vec3 fnk_extractEmission(QrkMaterial material, vec2 texCoords) {
+vec3 fnk_extractEmission(FnkMaterial material, vec2 texCoords) {
   vec3 emission = vec3(0.0);
   if (material.emissionCount > 0) {
     emission = texture(material.emissionMaps[0], texCoords).rgb;
@@ -182,7 +182,7 @@ vec3 fnk_extractEmission(QrkMaterial material, vec2 texCoords) {
 /**
  * Calculate a material's final alpha based on its set of diffuse textures.
  */
-float fnk_materialAlpha(QrkMaterial material, vec2 texCoords) {
+float fnk_materialAlpha(FnkMaterial material, vec2 texCoords) {
   float sum = 0.0;
   for (int i = 0; i < material.diffuseCount; i++) {
     sum += texture(material.diffuseMaps[i], texCoords).a;
@@ -194,7 +194,7 @@ float fnk_materialAlpha(QrkMaterial material, vec2 texCoords) {
  * Calculate attenuation based on fragment distance from a light source.
  * Returns a multipler that can be used in shading.
  */
-float fnk_calcAttenuation(QrkAttenuation attenuation, float fragDist) {
+float fnk_calcAttenuation(FnkAttenuation attenuation, float fragDist) {
   // Avoid dividing by zero.
   return 1.0 / max(attenuation.constant + attenuation.linear * fragDist +
                        attenuation.quadratic * (fragDist * fragDist),
@@ -205,7 +205,7 @@ float fnk_calcAttenuation(QrkAttenuation attenuation, float fragDist) {
  * Calculate the directional intensity for a spotlight given the direction from
  * a fragment.
  */
-float fnk_calcSpotLightIntensity(QrkSpotLight light, vec3 lightDir) {
+float fnk_calcSpotLightIntensity(FnkSpotLight light, vec3 lightDir) {
   // Calculate cosine of the angle between the spotlight's direction vector and
   // the direction from the light to the current fragment.
   float theta = dot(lightDir, normalize(-light.direction));
@@ -228,7 +228,7 @@ vec3 fnk_shadeAmbientDeferred(vec3 albedo, vec3 ambient, float ao) {
 }
 
 /** Calculate shading for ambient component based on the given material. */
-vec3 fnk_shadeAmbient(QrkMaterial material, vec3 albedo, vec2 texCoords) {
+vec3 fnk_shadeAmbient(FnkMaterial material, vec3 albedo, vec2 texCoords) {
   float ao = fnk_extractAmbientOcclusion(material, texCoords);
   return fnk_shadeAmbientDeferred(albedo, material.ambient, ao);
 }
@@ -237,7 +237,7 @@ vec3 fnk_shadeAmbient(QrkMaterial material, vec3 albedo, vec2 texCoords) {
 
 /** Calculate deferred shading for emission based on an emission color. */
 vec3 fnk_shadeEmissionDeferred(vec3 emissionColor, vec3 fragPos_viewSpace,
-                               QrkAttenuation emissionAttenuation) {
+                               FnkAttenuation emissionAttenuation) {
   // Calculate emission attenuation towards camera.
   float fragDist = length(fragPos_viewSpace);
   float attenuation = fnk_calcAttenuation(emissionAttenuation, fragDist);
@@ -246,7 +246,7 @@ vec3 fnk_shadeEmissionDeferred(vec3 emissionColor, vec3 fragPos_viewSpace,
 }
 
 /** Calculate shading for emission textures on the given material. */
-vec3 fnk_shadeEmission(QrkMaterial material, vec3 fragPos_viewSpace,
+vec3 fnk_shadeEmission(FnkMaterial material, vec3 fragPos_viewSpace,
                        vec2 texCoords) {
   vec3 emission = fnk_extractEmission(material, texCoords);
   return fnk_shadeEmissionDeferred(emission, fragPos_viewSpace,
@@ -260,7 +260,7 @@ vec3 fnk_shadeEmission(QrkMaterial material, vec3 fragPos_viewSpace,
  * convert from tangent space to the target space, or returns a vertex normal
  * if no normal map is present.
  */
-vec3 fnk_getNormal(QrkMaterial material, vec2 texCoords, mat3 TBN,
+vec3 fnk_getNormal(FnkMaterial material, vec2 texCoords, mat3 TBN,
                    vec3 vertexNormal) {
   if (material.hasNormalMap) {
     return normalize(TBN * fnk_sampleNormalMap(material.normalMap, texCoords));

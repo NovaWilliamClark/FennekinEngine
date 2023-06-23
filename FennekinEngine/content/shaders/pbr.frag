@@ -91,7 +91,7 @@ vec3 fnk_shadeAmbientIBLDeferred(vec3 albedo, vec3 irradiance,
  * Calculate shading for ambient IBL component based on the given
  * material.
  */
-vec3 fnk_shadeAmbientIrradiance(QrkMaterial material, vec2 texCoords,
+vec3 fnk_shadeAmbientIrradiance(FnkMaterial material, vec2 texCoords,
                                 vec3 irradiance, vec3 prefilteredEnvColor,
                                 vec2 envBRDF, vec3 viewDir, vec3 normal) {
   vec3 albedo = fnk_extractAlbedo(material, texCoords);
@@ -154,7 +154,7 @@ vec3 fnk_shadeCookTorranceGGXDeferred(vec3 albedo, float roughness,
  * Calculate the Cook-Torrance shading model with diffuse, and specular
  * components. Does not include attenuation.
  */
-vec3 fnk_shadeCookTorranceGGX(QrkMaterial material, vec3 lightDiffuse,
+vec3 fnk_shadeCookTorranceGGX(FnkMaterial material, vec3 lightDiffuse,
                               vec3 lightSpecular, vec3 lightDir, vec3 viewDir,
                               vec3 normal, vec2 texCoords) {
   vec3 albedo = fnk_extractAlbedo(material, texCoords);
@@ -169,7 +169,7 @@ vec3 fnk_shadeCookTorranceGGX(QrkMaterial material, vec3 lightDiffuse,
 
 /** Calculate shading for a directional light source using deferred data. */
 vec3 fnk_shadeDirectionalLightCookTorranceGGXDeferred(
-    vec3 albedo, float roughness, float metallic, QrkDirectionalLight light,
+    vec3 albedo, float roughness, float metallic, FnkDirectionalLight light,
     vec3 fragPos, vec3 normal, float shadow) {
   vec3 lightDir = normalize(-light.direction);
   vec3 viewDir = normalize(-fragPos);
@@ -184,8 +184,8 @@ vec3 fnk_shadeDirectionalLightCookTorranceGGXDeferred(
 }
 
 /** Calculate shading for a directional light source. */
-vec3 fnk_shadeDirectionalLightCookTorranceGGX(QrkMaterial material,
-                                              QrkDirectionalLight light,
+vec3 fnk_shadeDirectionalLightCookTorranceGGX(FnkMaterial material,
+                                              FnkDirectionalLight light,
                                               vec3 fragPos, vec3 normal,
                                               vec2 texCoords, float shadow) {
   vec3 albedo = fnk_extractAlbedo(material, texCoords);
@@ -198,7 +198,7 @@ vec3 fnk_shadeDirectionalLightCookTorranceGGX(QrkMaterial material,
 /** Calculate shading for a point light source using deferred data. */
 vec3 fnk_shadePointLightCookTorranceGGXDeferred(vec3 albedo, float roughness,
                                                 float metallic,
-                                                QrkPointLight light,
+                                                FnkPointLight light,
                                                 vec3 fragPos, vec3 normal) {
   vec3 lightDir = normalize(light.position - fragPos);
   vec3 viewDir = normalize(-fragPos);
@@ -215,8 +215,8 @@ vec3 fnk_shadePointLightCookTorranceGGXDeferred(vec3 albedo, float roughness,
 }
 
 /** Calculate shading for a point light source. */
-vec3 fnk_shadePointLightCookTorranceGGX(QrkMaterial material,
-                                        QrkPointLight light, vec3 fragPos,
+vec3 fnk_shadePointLightCookTorranceGGX(FnkMaterial material,
+                                        FnkPointLight light, vec3 fragPos,
                                         vec3 normal, vec2 texCoords) {
   vec3 albedo = fnk_extractAlbedo(material, texCoords);
   float roughness = fnk_extractRoughness(material, texCoords);
@@ -228,7 +228,7 @@ vec3 fnk_shadePointLightCookTorranceGGX(QrkMaterial material,
 /** Calculate shading for a spot light source using deferred data. */
 vec3 fnk_shadeSpotLightCookTorranceGGXDeferred(vec3 albedo, float roughness,
                                                float metallic,
-                                               QrkSpotLight light, vec3 fragPos,
+                                               FnkSpotLight light, vec3 fragPos,
                                                vec3 normal) {
   vec3 lightDir = normalize(light.position - fragPos);
   vec3 viewDir = normalize(-fragPos);
@@ -247,7 +247,7 @@ vec3 fnk_shadeSpotLightCookTorranceGGXDeferred(vec3 albedo, float roughness,
 }
 
 /** Calculate shading for a spot light source. */
-vec3 fnk_shadeSpotLightCookTorranceGGX(QrkMaterial material, QrkSpotLight light,
+vec3 fnk_shadeSpotLightCookTorranceGGX(FnkMaterial material, FnkSpotLight light,
                                        vec3 fragPos, vec3 normal,
                                        vec2 texCoords) {
   vec3 albedo = fnk_extractAlbedo(material, texCoords);

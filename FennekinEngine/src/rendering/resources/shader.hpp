@@ -13,9 +13,6 @@
 
 class Shader;
 
-class ShaderException : public QuarkException {
-  using QuarkException::QuarkException;
-};
 
 // An interface for a unified way of configuring shader uniforms.
 // TODO: Extract to a "UniformContext" class that is used by the shader, rather

@@ -59,7 +59,7 @@ void SsaoKernel::regenerate(int kernelSize, int noiseTextureSideLength) {
   // repeat wrap mode so that it properly tiles over the screen.
   TextureParams params = {
       .filtering = ETextureFiltering::NEAREST,
-      .wrapMode = TextureWrapMode::REPEAT,
+      .wrapMode = ETextureWrapMode::REPEAT,
   };
   noiseTexture_ =
       Texture::createFromData(noiseTextureSideLength, noiseTextureSideLength,

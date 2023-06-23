@@ -46,7 +46,7 @@ EquirectCubemapConverter::EquirectCubemapConverter(int width, int height,
   TextureParams params = {
       .filtering = generateMips ? ETextureFiltering::TRILINEAR
                                 : ETextureFiltering::BILINEAR,
-      .wrapMode = TextureWrapMode::CLAMP_TO_EDGE,
+      .wrapMode = ETextureWrapMode::CLAMP_TO_EDGE,
       .generateMips =
           generateMips ? EMipGeneration::ALWAYS : EMipGeneration::NEVER,
   };

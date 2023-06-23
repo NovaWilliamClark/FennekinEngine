@@ -8,14 +8,10 @@
 #include <assimp/scene.h>
 #include <glm/glm.hpp>
 
-#include "core/debug/exceptions.hpp"
 #include "rendering/resources/shader.hpp"
 #include "rendering/resources/texture_map.hpp"
 #include "scene/mesh.hpp"
 
-class ModelLoaderException : public QuarkException {
-    using QuarkException::QuarkException;
-};
 
 struct ModelVertex {
     glm::vec3 position;
@@ -26,8 +22,8 @@ struct ModelVertex {
 
 class ModelMesh final : public Mesh {
 public:
-    ModelMesh(std::vector<ModelVertex> vertices, const std::vector<unsigned int>& indices,
-              const std::vector<TextureMap>& textureMaps, unsigned int instanceCount = 0);
+    ModelMesh(std::vector<ModelVertex> t_vertices, const std::vector<unsigned int>& t_indices,
+              const std::vector<TextureMap>& t_textureMaps, unsigned int t_instanceCount = 0);
 
     ~ModelMesh() override = default;
 
@@ -42,20 +38,20 @@ constexpr auto DEFAULT_LOAD_FLAGS = aiProcess_Triangulate | aiProcess_GenSmoothN
                                     aiProcess_OptimizeGraph | aiProcess_SplitLargeMeshes |
                                     aiProcess_RemoveRedundantMaterials;
 
-class Model : public Renderable {
+class Model final : public Renderable {
 public:
-    explicit Model(const char* path, unsigned int instanceCount = 0);
+    explicit Model(const char* t_path, unsigned int t_instanceCount = 0);
     ~Model() override = default;
-    void loadInstanceModels(const std::vector<glm::mat4>& models);
-    void loadInstanceModels(const glm::mat4* models, unsigned int size);
-    void drawWithTransform(const glm::mat4& transform, Shader& shader,
-                           TextureRegistry* textureRegistry = nullptr) override;
+    void loadInstanceModels(const std::vector<glm::mat4>& t_models) const;
+    void loadInstanceModels(const glm::mat4* t_models, unsigned int t_size) const;
+    void drawWithTransform(const glm::mat4& t_transform, Shader& t_shader,
+                           TextureRegistry* t_textureRegistry = nullptr) override;
 
 private:
-    void loadModel(std::string path);
-    void processNode(RenderableNode& target, aiNode* node, const aiScene* scene);
-    std::unique_ptr<ModelMesh> processMesh(aiMesh* mesh, const aiScene* scene);
-    std::vector<TextureMap> loadMaterialTextureMaps(aiMaterial* material, ETextureMapType type);
+    void loadModel(const std::string& t_path);
+    void processNode(RenderableNode& t_target, const aiNode* t_node, const aiScene* t_scene);
+    std::unique_ptr<ModelMesh> processMesh(aiMesh* t_mesh, const aiScene* t_scene);
+    std::vector<TextureMap> loadMaterialTextureMaps(const aiMaterial* t_material, ETextureMapType t_type);
 
     unsigned int m_instanceCount;
     RenderableNode m_rootNode;

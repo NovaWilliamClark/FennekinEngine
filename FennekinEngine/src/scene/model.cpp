@@ -24,10 +24,10 @@ glm::mat4 aiMatrix4x4ToGlm(const aiMatrix4x4& m) {
     // clang-format on
 }
 
-ModelMesh::ModelMesh(std::vector<ModelVertex> vertices, const std::vector<unsigned int>& indices,
-                     const std::vector<TextureMap>& textureMaps, unsigned int instanceCount) :
-    m_vertices(std::move(vertices)) {
-    Mesh::loadMeshData(m_vertices.data(), m_vertices.size(), sizeof(ModelVertex), indices, textureMaps, instanceCount);
+ModelMesh::ModelMesh(std::vector<ModelVertex> t_vertices, const std::vector<unsigned int>& t_indices,
+                     const std::vector<TextureMap>& t_textureMaps, unsigned int t_instanceCount) :
+    m_vertices(std::move(t_vertices)) {
+    Mesh::loadMeshData(m_vertices.data(), m_vertices.size(), sizeof(ModelVertex), t_indices, t_textureMaps, t_instanceCount);
 }
 
 void ModelMesh::initializeVertexAttributes() {
@@ -43,8 +43,8 @@ void ModelMesh::initializeVertexAttributes() {
     vertexArray.finalizeVertexAttribs();
 }
 
-Model::Model(const char* path, unsigned int instanceCount) : m_instanceCount(instanceCount) {
-    const std::string pathString(path);
+Model::Model(const char* t_path, unsigned int t_instanceCount) : m_instanceCount(t_instanceCount) {
+    const std::string pathString(t_path);
     const size_t i = pathString.find_last_of("/");
     // This will either be the model's directory, or empty string if the model is
     // at project root.
@@ -53,30 +53,30 @@ Model::Model(const char* path, unsigned int instanceCount) : m_instanceCount(ins
     loadModel(pathString);
 }
 
-void Model::loadInstanceModels(const std::vector<glm::mat4>& models) {
+void Model::loadInstanceModels(const std::vector<glm::mat4>& t_models) const {
     m_rootNode.visitRenderables([&](Renderable* t_renderable) {
         // All renderables in a Model are ModelMeshes.
         auto* mesh = dynamic_cast<ModelMesh*>(t_renderable);
-        mesh->loadInstanceModels(models);
+        mesh->loadInstanceModels(t_models);
     });
 }
 
-void Model::loadInstanceModels(const glm::mat4* models, unsigned int size) {
+void Model::loadInstanceModels(const glm::mat4* t_models, unsigned int t_size) const {
     m_rootNode.visitRenderables([&](Renderable* t_renderable) {
         // All renderables in a Model are ModelMeshes.
         auto* mesh = dynamic_cast<ModelMesh*>(t_renderable);
-        mesh->loadInstanceModels(models, size);
+        mesh->loadInstanceModels(t_models, t_size);
     });
 }
 
-void Model::drawWithTransform(const glm::mat4& transform, Shader& shader, TextureRegistry* textureRegistry) {
-    m_rootNode.drawWithTransform(transform * getModelTransform(), shader, textureRegistry);
+void Model::drawWithTransform(const glm::mat4& t_transform, Shader& t_shader, TextureRegistry* t_textureRegistry) {
+    m_rootNode.drawWithTransform(t_transform * getModelTransform(), t_shader, t_textureRegistry);
 }
 
-void Model::loadModel(std::string path) {
+void Model::loadModel(const std::string& t_path) {
     Assimp::Importer importer;
     // Scene is freed by the importer.
-    const aiScene* scene = importer.ReadFile(path, DEFAULT_LOAD_FLAGS);
+    const aiScene* scene = importer.ReadFile(t_path, DEFAULT_LOAD_FLAGS);
 
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
         LOG_ERROR(importer.GetErrorString());
@@ -85,56 +85,56 @@ void Model::loadModel(std::string path) {
     processNode(m_rootNode, scene->mRootNode, scene);
 }
 
-void Model::processNode(RenderableNode& target, aiNode* node, const aiScene* scene) {
+void Model::processNode(RenderableNode& t_target, const aiNode* t_node, const aiScene* t_scene) {
     // Consume the transform.
-    target.setModelTransform(aiMatrix4x4ToGlm(node->mTransformation));
+    t_target.setModelTransform(aiMatrix4x4ToGlm(t_node->mTransformation));
 
     // Process each mesh in the node.
-    for (unsigned int i = 0; i < node->mNumMeshes; i++) {
+    for (unsigned int i = 0; i < t_node->mNumMeshes; i++) {
         // TODO: This might be creating meshes multiple times when they are
         // referenced by multiple nodes.
-        aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-        target.addRenderable(processMesh(mesh, scene));
+        aiMesh* mesh = t_scene->mMeshes[t_node->mMeshes[i]];
+        t_target.addRenderable(processMesh(mesh, t_scene));
     }
 
     // Recurse for children. Recursion stops when no children left.
-    for (unsigned int i = 0; i < node->mNumChildren; i++) {
+    for (unsigned int i = 0; i < t_node->mNumChildren; i++) {
         auto childTarget = std::make_unique<RenderableNode>();
-        processNode(*childTarget, node->mChildren[i], scene);
-        target.addChildNode(std::move(childTarget));
+        processNode(*childTarget, t_node->mChildren[i], t_scene);
+        t_target.addChildNode(std::move(childTarget));
     }
 }
 
-std::unique_ptr<ModelMesh> Model::processMesh(aiMesh* mesh, const aiScene* scene) {
+std::unique_ptr<ModelMesh> Model::processMesh(aiMesh* t_mesh, const aiScene* t_scene) {
     std::vector<ModelVertex> vertices;
     std::vector<unsigned int> indices;
     std::vector<TextureMap> textureMaps;
 
-    for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
+    for (unsigned int i = 0; i < t_mesh->mNumVertices; i++) {
         ModelVertex vertex{};
 
         // Process vertex positions, normals, tangents, and texture coordinates.
-        auto inputPos = mesh->mVertices[i];
+        auto inputPos = t_mesh->mVertices[i];
         glm::vec3 position(inputPos.x, inputPos.y, inputPos.z);
         vertex.position = position;
 
-        if (mesh->HasNormals()) {
-            auto inputNorm = mesh->mNormals[i];
+        if (t_mesh->HasNormals()) {
+            auto inputNorm = t_mesh->mNormals[i];
             vertex.normal = glm::vec3(inputNorm.x, inputNorm.y, inputNorm.z);
         } else {
             vertex.normal = glm::vec3(0.0f);
         }
 
-        if (mesh->HasTangentsAndBitangents()) {
-            auto inputTangent = mesh->mTangents[i];
+        if (t_mesh->HasTangentsAndBitangents()) {
+            auto inputTangent = t_mesh->mTangents[i];
             vertex.tangent = glm::vec3(inputTangent.x, inputTangent.y, inputTangent.z);
         } else {
             vertex.tangent = glm::vec3(0.0f);
         }
 
         // TODO: This is only using the first texture coord set.
-        if (mesh->HasTextureCoords(0)) {
-            auto inputTexCoords = mesh->mTextureCoords[0][i];
+        if (t_mesh->HasTextureCoords(0)) {
+            auto inputTexCoords = t_mesh->mTextureCoords[0][i];
             vertex.texCoords = glm::vec2(inputTexCoords.x, inputTexCoords.y);
         } else {
             vertex.texCoords = glm::vec2(0.0f);
@@ -144,8 +144,8 @@ std::unique_ptr<ModelMesh> Model::processMesh(aiMesh* mesh, const aiScene* scene
     }
 
     // Process indices.
-    for (unsigned int i = 0; i < mesh->mNumFaces; i++) {
-        aiFace face = mesh->mFaces[i];
+    for (unsigned int i = 0; i < t_mesh->mNumFaces; i++) {
+        aiFace face = t_mesh->mFaces[i];
         for (unsigned int j = 0; j < face.mNumIndices; j++) {
             indices.push_back(face.mIndices[j]);
         }
@@ -153,7 +153,7 @@ std::unique_ptr<ModelMesh> Model::processMesh(aiMesh* mesh, const aiScene* scene
 
     // Process material.
     {
-        aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+        aiMaterial* material = t_scene->mMaterials[t_mesh->mMaterialIndex];
         for (auto type : loaderSupportedTextureMapTypes) {
             auto loadedMaps = loadMaterialTextureMaps(material, type);
             textureMaps.insert(textureMaps.end(), loadedMaps.begin(), loadedMaps.end());
@@ -163,14 +163,14 @@ std::unique_ptr<ModelMesh> Model::processMesh(aiMesh* mesh, const aiScene* scene
     return std::make_unique<ModelMesh>(vertices, indices, textureMaps, m_instanceCount);
 }
 
-std::vector<TextureMap> Model::loadMaterialTextureMaps(aiMaterial* material, ETextureMapType type) {
-    std::vector<aiTextureType> aiTypes = textureMapTypeToAiTextureTypes(type);
+std::vector<TextureMap> Model::loadMaterialTextureMaps(const aiMaterial* t_material, const ETextureMapType t_type) {
+    const std::vector<aiTextureType> aiTypes = textureMapTypeToAiTextureTypes(t_type);
     std::vector<TextureMap> textureMaps;
 
-    for (aiTextureType aiType : aiTypes) {
-        for (unsigned int i = 0; i < material->GetTextureCount(aiType); i++) {
+    for (const aiTextureType aiType : aiTypes) {
+        for (unsigned int i = 0; i < t_material->GetTextureCount(aiType); i++) {
             aiString texturePath;
-            material->GetTexture(aiType, i, &texturePath);
+            t_material->GetTexture(aiType, i, &texturePath);
             // TODO: Pull the texture loading bits into a separate class.
             // Assume that the texture path is relative to model directory.
             std::string fullPath = m_directory + "/" + texturePath.C_Str();
@@ -181,8 +181,8 @@ std::vector<TextureMap> Model::loadMaterialTextureMaps(aiMaterial* material, ETe
                 // Texture has already been loaded, but likely of a different map type
                 // (for example, it could be a combined roughness / metallic map). If
                 // so, mark it as a packed texture.
-                TextureMap textureMap(item->second.getTexture(), type);
-                if (type != item->second.getType()) {
+                TextureMap textureMap(item->second.getTexture(), t_type);
+                if (t_type != item->second.getType()) {
                     textureMap.setPacked(true);
                     item->second.setPacked(true);
                 }
@@ -192,10 +192,10 @@ std::vector<TextureMap> Model::loadMaterialTextureMaps(aiMaterial* material, ETe
 
             // Assume that diffuse and emissive textures are in sRGB.
             // TODO: Allow for a way to override this if necessary.
-            bool isSRGB = type == ETextureMapType::DIFFUSE || type == ETextureMapType::EMISSION;
+            const bool isSRGB = t_type == ETextureMapType::DIFFUSE || t_type == ETextureMapType::EMISSION;
 
-            Texture texture = Texture::load(fullPath.c_str(), isSRGB);
-            TextureMap textureMap(texture, type);
+            const Texture texture = Texture::load(fullPath.c_str(), isSRGB);
+            TextureMap textureMap(texture, t_type);
             m_loadedTextureMaps.insert(std::make_pair(fullPath, textureMap));
             textureMaps.push_back(textureMap);
         }

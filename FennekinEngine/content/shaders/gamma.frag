@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef QUARKGL_GAMMA
-#define QUARKGL_GAMMA 2.2
+#ifndef FENNEKIN_GAMMA
+#define FENNEKIN_GAMMA 2.2
 #endif
 
 /**
@@ -21,5 +21,5 @@ vec3 fnk_gammaCorrect(vec3 color, float gamma) {
  *   fragColor.rgb = fnk_gammaCorrect(fragColor.rgb);
  */
 vec3 fnk_gammaCorrect(vec3 color) {
-  return fnk_gammaCorrect(color, QUARKGL_GAMMA);
+  return fnk_gammaCorrect(color, FENNEKIN_GAMMA);
 }

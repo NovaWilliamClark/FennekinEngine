@@ -1,35 +1,32 @@
 #include "mesh.hpp"
 
-void RenderableNode::drawWithTransform(const glm::mat4& transform,
-                                       Shader& shader,
-                                       TextureRegistry* textureRegistry) {
+void RenderableNode::drawWithTransform(const glm::mat4& t_transform,
+                                       Shader& t_shader,
+                                       TextureRegistry* t_textureRegistry) {
   // Combined incoming transform with the node's.
-  const glm::mat4 mat = transform * getModelTransform();
-  for (auto& renderable : renderables) {
-    renderable->drawWithTransform(mat, shader, textureRegistry);
+  const glm::mat4 mat = t_transform * getModelTransform();
+  for (const auto& renderable : renderables) {
+    renderable->drawWithTransform(mat, t_shader, t_textureRegistry);
   }
 
   // Render children.
-  for (auto& childNode : childNodes) {
-    childNode->drawWithTransform(mat, shader, textureRegistry);
+  for (const auto& childNode : childNodes) {
+    childNode->drawWithTransform(mat, t_shader, t_textureRegistry);
   }
 }
 
-void RenderableNode::visitRenderables(
-    std::function<void(Renderable*)> visitor) {
+void RenderableNode::visitRenderables(const std::function<void(Renderable*)>& t_visitor) const {
   for (auto& renderable : renderables) {
-    visitor(renderable.get());
+    t_visitor(renderable.get());
   }
   for (auto& childNode : childNodes) {
-    childNode->visitRenderables(visitor);
+    childNode->visitRenderables(t_visitor);
   }
 }
 
-void Mesh::loadMeshData(const void* t_vertexData, unsigned int t_numVertices,
-                        unsigned int t_vertexSizeBytes,
+void Mesh::loadMeshData(const void* t_vertexData, const unsigned int t_numVertices, const unsigned int t_vertexSizeBytes,
                         const std::vector<unsigned int>& t_indices,
-                        const std::vector<TextureMap>& t_textureMaps,
-                        unsigned int t_instanceCount) {
+                        const std::vector<TextureMap>& t_textureMaps, const unsigned int t_instanceCount) {
  indices = t_indices;
  textureMaps = t_textureMaps;
  numVertices = t_numVertices;
@@ -44,29 +41,29 @@ void Mesh::loadMeshData(const void* t_vertexData, unsigned int t_numVertices,
 
   // Load EBO if this is an indexed mesh.
   if (!t_indices.empty()) {
-    vertexArray.loadElementData(&t_indices[0],
-                                 t_indices.size() * sizeof(unsigned int));
+    vertexArray.loadElementData(t_indices.data(),
+                                t_indices.size() * sizeof(unsigned int));
   }
 }
 
-void Mesh::loadInstanceModels(const std::vector<glm::mat4>& models) {
-  vertexArray.loadInstanceVertexData(models.data(),
-                                     models.size() * sizeof(glm::mat4));
+void Mesh::loadInstanceModels(const std::vector<glm::mat4>& t_models) {
+  vertexArray.loadInstanceVertexData(t_models.data(),
+                                     t_models.size() * sizeof(glm::mat4));
 }
 
-void Mesh::loadInstanceModels(const glm::mat4* models, unsigned int size) {
-  vertexArray.loadInstanceVertexData(&models[0], size * sizeof(glm::mat4));
+void Mesh::loadInstanceModels(const glm::mat4* t_models, const unsigned int t_size) {
+  vertexArray.loadInstanceVertexData(&t_models[0], t_size * sizeof(glm::mat4));
 }
 
-void Mesh::drawWithTransform(const glm::mat4& transform, Shader& shader,
-                             TextureRegistry* textureRegistry) {
+void Mesh::drawWithTransform(const glm::mat4& t_transform, Shader& t_shader,
+                             TextureRegistry* t_textureRegistry) {
   // First we set the model transform, combining with the incoming transform.
-  shader.setMat4("model", transform * getModelTransform());
+  t_shader.setMat4("model", t_transform * getModelTransform());
 
-  bindTextures(shader, textureRegistry);
+  bindTextures(t_shader, t_textureRegistry);
 
   // Draw using the VAO.
-  shader.activate();
+  t_shader.activate();
   vertexArray.activate();
 
   glDraw();
@@ -74,7 +71,7 @@ void Mesh::drawWithTransform(const glm::mat4& transform, Shader& shader,
   vertexArray.deactivate();
 
   // Reset.
-  shader.deactivate();
+  t_shader.deactivate();
 }
 
 void Mesh::initializeVertexArrayInstanceData() {
@@ -82,16 +79,15 @@ void Mesh::initializeVertexArrayInstanceData() {
     // Allocate space for mat4 model transforms for the instancing.
     vertexArray.allocateInstanceVertexData(instanceCount * sizeof(glm::mat4));
     // Add vertex attributes (max attribute size is vec4, so we need 4 of them).
-    vertexArray.addVertexAttrib(4, GL_FLOAT, /*instanceDivisor=*/1);
-    vertexArray.addVertexAttrib(4, GL_FLOAT, /*instanceDivisor=*/1);
-    vertexArray.addVertexAttrib(4, GL_FLOAT, /*instanceDivisor=*/1);
-    vertexArray.addVertexAttrib(4, GL_FLOAT, /*instanceDivisor=*/1);
+    vertexArray.addVertexAttrib(4, GL_FLOAT, 1);
+    vertexArray.addVertexAttrib(4, GL_FLOAT, 1);
+    vertexArray.addVertexAttrib(4, GL_FLOAT, 1);
+    vertexArray.addVertexAttrib(4, GL_FLOAT, 1);
     vertexArray.finalizeVertexAttribs();
   }
 }
 
-void Mesh::bindTextures(Shader& shader, TextureRegistry* textureRegistry) {
-  // Bind textures. Assumes uniform naming is "material.textureMapType[idx]".
+void Mesh::bindTextures(Shader& t_shader, TextureRegistry* t_textureRegistry) {
   unsigned int diffuseIdx = 0;
   unsigned int specularIdx = 0;
   unsigned int roughnessIdx = 0;
@@ -102,13 +98,13 @@ void Mesh::bindTextures(Shader& shader, TextureRegistry* textureRegistry) {
 
   // If a TextureRegistry isn't provided, just start with texture unit 0.
   unsigned int textureUnit = 0;
-  if (textureRegistry != nullptr) {
-    textureRegistry->pushUsageBlock();
-    textureUnit = textureRegistry->getNextTextureUnit();
+  if (t_textureRegistry != nullptr) {
+    t_textureRegistry->pushUsageBlock();
+    textureUnit = t_textureRegistry->getNextTextureUnit();
   }
   for (TextureMap& textureMap : textureMaps) {
     std::string samplerName;
-    ETextureMapType type = textureMap.getType();
+    const ETextureMapType type = textureMap.getType();
     Texture& texture = textureMap.getTexture();
     if (type == ETextureMapType::CUBEMAP) {
       texture.bindToUnit(textureUnit, ETextureBindType::CUBEMAP);
@@ -133,21 +129,21 @@ void Mesh::bindTextures(Shader& shader, TextureRegistry* textureRegistry) {
           break;
         case ETextureMapType::ROUGHNESS:
           ss << "roughnessMaps[" << roughnessIdx << "]";
-          shader.setBool(materialName + ".roughnessIsPacked[" +
+          t_shader.setBool(materialName + ".roughnessIsPacked[" +
                              std::to_string(roughnessIdx) + "]",
                          textureMap.isPacked());
           roughnessIdx++;
           break;
         case ETextureMapType::METALLIC:
           ss << "metallicMaps[" << metallicIdx << "]";
-          shader.setBool(materialName + ".metallicIsPacked[" +
+          t_shader.setBool(materialName + ".metallicIsPacked[" +
                              std::to_string(metallicIdx) + "]",
                          textureMap.isPacked());
           metallicIdx++;
           break;
         case ETextureMapType::AO:
           ss << "aoMaps[" << aoIdx << "]";
-          shader.setBool(
+          t_shader.setBool(
               materialName + ".aoIsPacked[" + std::to_string(aoIdx) + "]",
               textureMap.isPacked());
           aoIdx++;
@@ -169,24 +165,24 @@ void Mesh::bindTextures(Shader& shader, TextureRegistry* textureRegistry) {
       samplerName = ss.str();
     }
     // Set the sampler to the correct texture unit.
-    shader.setInt(samplerName, textureUnit);
+    t_shader.setInt(samplerName, textureUnit);
 
-    if (textureRegistry != nullptr) {
-      textureUnit = textureRegistry->getNextTextureUnit();
+    if (t_textureRegistry != nullptr) {
+      textureUnit = t_textureRegistry->getNextTextureUnit();
     } else {
       textureUnit++;
     }
   }
-  if (textureRegistry != nullptr) {
-    textureRegistry->popUsageBlock();
+  if (t_textureRegistry != nullptr) {
+    t_textureRegistry->popUsageBlock();
   }
-  shader.setInt("material.diffuseCount", diffuseIdx);
-  shader.setInt("material.specularCount", specularIdx);
-  shader.setInt("material.roughnessCount", roughnessIdx);
-  shader.setInt("material.metallicCount", metallicIdx);
-  shader.setInt("material.aoCount", aoIdx);
-  shader.setInt("material.emissionCount", emissionIdx);
-  shader.setInt("material.hasNormalMap", hasNormalMap);
+  t_shader.setInt("material.diffuseCount", diffuseIdx);
+  t_shader.setInt("material.specularCount", specularIdx);
+  t_shader.setInt("material.roughnessCount", roughnessIdx);
+  t_shader.setInt("material.metallicCount", metallicIdx);
+  t_shader.setInt("material.aoCount", aoIdx);
+  t_shader.setInt("material.emissionCount", emissionIdx);
+  t_shader.setInt("material.hasNormalMap", hasNormalMap);
 }
 
 void Mesh::glDraw() {

@@ -18,7 +18,7 @@ layout(location = 1) out vec4 gNormalRoughness;
 layout(location = 2) out vec4 gAlbedoMetallic;
 layout(location = 3) out vec3 gEmission;
 
-uniform QrkMaterial material;
+uniform FnkMaterial material;
 
 void main() {
   // Fill the G-Buffer.

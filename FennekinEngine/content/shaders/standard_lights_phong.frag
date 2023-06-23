@@ -5,7 +5,7 @@
 #pragma fnk_include < standard_lights.frag>
 
 /** Calculate shading from all active directional lights. */
-vec3 fnk_shadeAllDirectionalLightsBlinnPhong(QrkMaterial material, vec3 fragPos,
+vec3 fnk_shadeAllDirectionalLightsBlinnPhong(FnkMaterial material, vec3 fragPos,
                                              vec3 normal, vec2 texCoords,
                                              float shadow, float ao) {
   vec3 result = vec3(0.0);
@@ -33,7 +33,7 @@ vec3 fnk_shadeAllDirectionalLightsBlinnPhongDeferred(vec3 albedo, vec3 specular,
 }
 
 /** Calculate shading from all active point lights. */
-vec3 fnk_shadeAllPointLightsBlinnPhong(QrkMaterial material, vec3 fragPos,
+vec3 fnk_shadeAllPointLightsBlinnPhong(FnkMaterial material, vec3 fragPos,
                                        vec3 normal, vec2 texCoords, float ao) {
   vec3 result = vec3(0.0);
   for (int i = 0; i < fnk_pointLightCount; i++) {
@@ -58,7 +58,7 @@ vec3 fnk_shadeAllPointLightsBlinnPhongDeferred(vec3 albedo, vec3 specular,
 }
 
 /** Calculate shading from all active spot lights. */
-vec3 fnk_shadeAllSpotLightsBlinnPhong(QrkMaterial material, vec3 fragPos,
+vec3 fnk_shadeAllSpotLightsBlinnPhong(FnkMaterial material, vec3 fragPos,
                                       vec3 normal, vec2 texCoords, float ao) {
   vec3 result = vec3(0.0);
   for (int i = 0; i < fnk_spotLightCount; i++) {
@@ -83,7 +83,7 @@ vec3 fnk_shadeAllSpotLightsDeferredBlinnPhong(vec3 albedo, vec3 specular,
 }
 
 /** Calculate shading from all light sources, except emission textures. */
-vec3 fnk_shadeAllLightsBlinnPhong(QrkMaterial material, vec3 fragPos,
+vec3 fnk_shadeAllLightsBlinnPhong(FnkMaterial material, vec3 fragPos,
                                   vec3 normal, vec2 texCoords, float shadow,
                                   float ao) {
   vec3 directional = fnk_shadeAllDirectionalLightsBlinnPhong(
@@ -95,7 +95,7 @@ vec3 fnk_shadeAllLightsBlinnPhong(QrkMaterial material, vec3 fragPos,
   return directional + point + spot;
 }
 
-vec3 fnk_shadeAllLightsBlinnPhong(QrkMaterial material, vec3 fragPos,
+vec3 fnk_shadeAllLightsBlinnPhong(FnkMaterial material, vec3 fragPos,
                                   vec3 normal, vec2 texCoords) {
   return fnk_shadeAllLightsBlinnPhong(material, fragPos, normal, texCoords,
                                       /*shadow=*/0.0, /*ao=*/1.0);

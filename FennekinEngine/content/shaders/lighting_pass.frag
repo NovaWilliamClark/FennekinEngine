@@ -23,7 +23,7 @@ uniform sampler2D fnk_ssao;
 uniform vec3 ambient;
 uniform float shininess;
 uniform float emissionIntensity;
-uniform QrkAttenuation emissionAttenuation;
+uniform FnkAttenuation emissionAttenuation;
 
 uniform int lightingModel;
 

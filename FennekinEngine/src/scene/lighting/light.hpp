@@ -7,10 +7,6 @@
 #include <string>
 #include <vector>
 
-class LightException final : public QuarkException {
-    using QuarkException::QuarkException;
-};
-
 struct Attenuation {
     float constant;
     float linear;
@@ -52,7 +48,7 @@ protected:
 
     void checkState() {
         if (hasViewDependentChanged && !hasViewBeenApplied) {
-            throw LightException("ERROR::LIGHT::VIEW_CHANGED\n"
+            LOG_CRITICAL("ERROR::LIGHT::VIEW_CHANGED\n"
                                  "Light state changed without re-applying view transform.");
         }
     }

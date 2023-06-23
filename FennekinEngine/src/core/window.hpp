@@ -18,9 +18,6 @@
 #include <tuple>
 #include <vector>
 
-class WindowException : public QuarkException {
-    using QuarkException::QuarkException;
-};
 
 constexpr int DEFAULT_WIDTH = 800;
 constexpr int DEFAULT_HEIGHT = 600;
@@ -28,7 +25,7 @@ constexpr char const* DEFAULT_TITLE = "FennikinEngine - William Clark";
 constexpr glm::vec4 DEFAULT_CLEAR_COLOR = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 
 // Controls special convenience behavior when Esc is pressed.
-enum class EscBehavior {
+enum class EEscBehavior {
     NONE,
     TOGGLE_MOUSE_CAPTURE,
     CLOSE,
@@ -37,14 +34,14 @@ enum class EscBehavior {
 };
 
 // Controls special convenience behavior when the LMB is pressed.
-enum class MouseButtonBehavior {
+enum class EMouseButtonBehavior {
     NONE,
     CAPTURE_MOUSE,
 };
 
-class Window : public UniformSource {
+class Window final : public UniformSource {
 public:
-    Window(int width = DEFAULT_WIDTH, int height = DEFAULT_HEIGHT, const char* title = DEFAULT_TITLE,
+    Window(int t_width = DEFAULT_WIDTH, int height = DEFAULT_HEIGHT, const char* title = DEFAULT_TITLE,
            bool fullscreen = false, int samples = 0);
     virtual ~Window();
     GLFWwindow* getGlfwRef() const {
@@ -179,17 +176,17 @@ public:
     void makeFullscreen();
     void makeWindowed();
 
-    [[nodiscard]] EscBehavior getEscBehavior() const {
+    [[nodiscard]] EEscBehavior getEscBehavior() const {
         return m_escBehavior;
     }
-    void setEscBehavior(const EscBehavior t_behavior) {
+    void setEscBehavior(const EEscBehavior t_behavior) {
         m_escBehavior = t_behavior;
     }
 
-    [[nodiscard]] MouseButtonBehavior getMouseButtonBehavior() const {
+    [[nodiscard]] EMouseButtonBehavior getMouseButtonBehavior() const {
         return m_mouseButtonBehavior;
     }
-    void setMouseButtonBehavior(const MouseButtonBehavior t_behavior) {
+    void setMouseButtonBehavior(const EMouseButtonBehavior t_behavior) {
         m_mouseButtonBehavior = t_behavior;
     }
 
@@ -245,8 +242,8 @@ private:
     float m_frameDeltaSum = 0.0f;
     glm::vec4 m_clearColor = DEFAULT_CLEAR_COLOR;
 
-    EscBehavior m_escBehavior = EscBehavior::NONE;
-    MouseButtonBehavior m_mouseButtonBehavior = MouseButtonBehavior::NONE;
+    EEscBehavior m_escBehavior = EEscBehavior::NONE;
+    EMouseButtonBehavior m_mouseButtonBehavior = EMouseButtonBehavior::NONE;
     bool m_resizeUpdatesEnabled = false;
     bool m_keyInputEnabled = false;
     bool m_scrollInputEnabled = false;

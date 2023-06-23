@@ -3,7 +3,6 @@
 #include "core/core.hpp"
 #include "core/window.hpp"
 
-#include "core/debug/debug.hpp"
 #include "core/debug/exceptions.hpp"
 
 #include "rendering/core/framebuffer.hpp"

@@ -6,8 +6,8 @@
 Shader::Shader(const ShaderSource& vertexSource,
                const ShaderSource& fragmentSource) {
   ShaderCompiler compiler;
-  compiler.loadAndCompileShader(vertexSource, ShaderType::VERTEX);
-  compiler.loadAndCompileShader(fragmentSource, ShaderType::FRAGMENT);
+  compiler.loadAndCompileShader(vertexSource, EShaderType::VERTEX);
+  compiler.loadAndCompileShader(fragmentSource, EShaderType::FRAGMENT);
   shaderProgram = compiler.linkShaderProgram();
 }
 
@@ -15,9 +15,9 @@ Shader::Shader(const ShaderSource& vertexSource,
                const ShaderSource& fragmentSource,
                const ShaderSource& geometrySource) {
   ShaderCompiler compiler;
-  compiler.loadAndCompileShader(vertexSource, ShaderType::VERTEX);
-  compiler.loadAndCompileShader(fragmentSource, ShaderType::FRAGMENT);
-  compiler.loadAndCompileShader(geometrySource, ShaderType::GEOMETRY);
+  compiler.loadAndCompileShader(vertexSource, EShaderType::VERTEX);
+  compiler.loadAndCompileShader(fragmentSource, EShaderType::FRAGMENT);
+  compiler.loadAndCompileShader(geometrySource, EShaderType::GEOMETRY);
   shaderProgram = compiler.linkShaderProgram();
 }
 
@@ -90,7 +90,7 @@ void Shader::setMat4(const char* name, const glm::mat4& matrix) {
 
 ComputeShader::ComputeShader(const ShaderSource& computeSource) {
   ShaderCompiler compiler;
-  compiler.loadAndCompileShader(computeSource, ShaderType::COMPUTE);
+  compiler.loadAndCompileShader(computeSource, EShaderType::COMPUTE);
   shaderProgram = compiler.linkShaderProgram();
 }
 

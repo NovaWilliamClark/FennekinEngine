@@ -15,7 +15,7 @@ void TextureRegistry::pushUsageBlock() {
 
 void TextureRegistry::popUsageBlock() {
   if (m_lastAvailableUnits.empty()) {
-    throw TextureRegistryException("ERROR::TEXTURE_REGISTRY::POP");
+    LOG_CRITICAL("ERROR::TEXTURE_REGISTRY::POP");
   }
   m_nextTextureUnit = m_lastAvailableUnits.back();
   m_lastAvailableUnits.pop_back();

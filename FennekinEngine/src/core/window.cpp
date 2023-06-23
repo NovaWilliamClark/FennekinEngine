@@ -1,6 +1,6 @@
 #include "window.hpp"
 
-Window::Window(int width, int height, const char* title, bool fullscreen, int samples) {
+Window::Window(int t_width, int height, const char* title, bool fullscreen, int samples) {
     Fnk::init();
 
     if (samples > 0) {
@@ -13,17 +13,17 @@ Window::Window(int width, int height, const char* title, bool fullscreen, int sa
         monitor = glfwGetPrimaryMonitor();
     }
 
-    m_window = glfwCreateWindow(width, height, title, monitor, /* share */ nullptr);
+    m_window = glfwCreateWindow(t_width, height, title, monitor, /* share */ nullptr);
 
     if (m_window == nullptr) {
         Fnk::terminate();
-        throw WindowException("ERROR::WINDOW::CREATE_FAILED");
+        LOG_CRITICAL("ERROR::WINDOW::CREATE_FAILED");
     }
 
     activate();
 
     if (glewInit() != GLEW_OK) {
-        throw WindowException("ERROR::WINDOW::GLAD_INITIALIZATION_FAILED");
+        LOG_CRITICAL("ERROR::WINDOW::GLAD_INITIALIZATION_FAILED");
     }
 
     Fnk::initGlErrorLogging();
@@ -207,16 +207,16 @@ void Window::keyCallback(int t_key, int t_scanCode, int t_action, int t_mods) {
         return;
 
     if (t_key == GLFW_KEY_ESCAPE && t_action == GLFW_PRESS) {
-        if (m_escBehavior == EscBehavior::TOGGLE_MOUSE_CAPTURE) {
+        if (m_escBehavior == EEscBehavior::TOGGLE_MOUSE_CAPTURE) {
             auto inputMode = glfwGetInputMode(m_window, GLFW_CURSOR);
             if (inputMode == GLFW_CURSOR_NORMAL) {
                 enableMouseCapture();
             } else {
                 disableMouseCapture();
             }
-        } else if (m_escBehavior == EscBehavior::CLOSE) {
+        } else if (m_escBehavior == EEscBehavior::CLOSE) {
             glfwSetWindowShouldClose(m_window, true);
-        } else if (m_escBehavior == EscBehavior::UNCAPTURE_MOUSE_OR_CLOSE) {
+        } else if (m_escBehavior == EEscBehavior::UNCAPTURE_MOUSE_OR_CLOSE) {
             auto inputMode = glfwGetInputMode(m_window, GLFW_CURSOR);
             if (inputMode == GLFW_CURSOR_DISABLED) {
                 disableMouseCapture();
@@ -264,7 +264,7 @@ void Window::mouseButtonCallback(int t_button, int t_action, int t_mods) {
         return;
 
     if (t_button == GLFW_MOUSE_BUTTON_LEFT && t_action == GLFW_PRESS) {
-        if (m_mouseButtonBehavior == MouseButtonBehavior::CAPTURE_MOUSE) {
+        if (m_mouseButtonBehavior == EMouseButtonBehavior::CAPTURE_MOUSE) {
             enableMouseCapture();
         }
     }
@@ -311,7 +311,7 @@ void Window::bindCamera(std::shared_ptr<Camera> t_camera) {
 
 void Window::bindCameraControls(std::shared_ptr<CameraControls> t_cameraControls) {
     if (!m_boundCamera) {
-        throw WindowException("ERROR::WINDOW::BIND_CAMERA_CONTROLS_FAILED\n"
+        LOG_CRITICAL("ERROR::WINDOW::BIND_CAMERA_CONTROLS_FAILED\n"
                               "Camera must be bound before camera controls.");
     }
     m_boundCameraControls = t_cameraControls;

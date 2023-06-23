@@ -1,6 +1,6 @@
 #pragma once
 
-enum class ShaderType {
+enum class EShaderType {
   VERTEX,
   FRAGMENT,
   GEOMETRY,

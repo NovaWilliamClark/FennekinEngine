@@ -4,7 +4,7 @@ BloomBuffer::BloomBuffer(int t_width, int t_height) : Framebuffer(t_width, t_hei
   // Create and attach the bloom buffer. Don't need a depth buffer.
   TextureParams resampleParams = {
       .filtering = ETextureFiltering::BILINEAR,
-      .wrapMode = TextureWrapMode::CLAMP_TO_EDGE,
+      .wrapMode = ETextureWrapMode::CLAMP_TO_EDGE,
       .generateMips = EMipGeneration::ALWAYS};
   m_bloomMipChainTexture =
       attachTexture(EBufferType::COLOR_HDR_ALPHA, resampleParams);
@@ -12,7 +12,7 @@ BloomBuffer::BloomBuffer(int t_width, int t_height) : Framebuffer(t_width, t_hei
 
 void BloomBuffer::selectMip(int t_mipLevel) {
   if (t_mipLevel < 0 || t_mipLevel >= m_bloomMipChainTexture.numMips) {
-    throw BloomException("ERROR::BLOOM::SOURCE_MIP_OUT_OF_RANGE");
+    LOG_CRITICAL("ERROR::BLOOM::SOURCE_MIP_OUT_OF_RANGE");
   }
   m_bloomMipChainTexture.asTexture().setSamplerMipRange(t_mipLevel, t_mipLevel);
 }

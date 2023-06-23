@@ -42,7 +42,7 @@ vec3 fnk_shadeBlinnPhongDeferred(vec3 albedo, vec3 specular, vec3 ambient,
  * Calculate the Blinn-Phong shading model with ambient, diffuse, and specular
  * components. Does not include attenuation.
  */
-vec3 fnk_shadeBlinnPhong(QrkMaterial material, vec3 lightDiffuse,
+vec3 fnk_shadeBlinnPhong(FnkMaterial material, vec3 lightDiffuse,
                          vec3 lightSpecular, vec3 lightDir, vec3 viewDir,
                          vec3 normal, vec2 texCoords, float intensity,
                          float shadow, float ao) {
@@ -58,7 +58,7 @@ vec3 fnk_shadeBlinnPhong(QrkMaterial material, vec3 lightDiffuse,
 /** Calculate shading for a directional light source using deferred data. */
 vec3 fnk_shadeDirectionalLightBlinnPhongDeferred(vec3 albedo, vec3 specular,
                                                  vec3 ambient, float shininess,
-                                                 QrkDirectionalLight light,
+                                                 FnkDirectionalLight light,
                                                  vec3 fragPos, vec3 normal,
                                                  float shadow, float ao) {
   vec3 lightDir = normalize(-light.direction);
@@ -70,8 +70,8 @@ vec3 fnk_shadeDirectionalLightBlinnPhongDeferred(vec3 albedo, vec3 specular,
 }
 
 /** Calculate shading for a directional light source. */
-vec3 fnk_shadeDirectionalLightBlinnPhong(QrkMaterial material,
-                                         QrkDirectionalLight light,
+vec3 fnk_shadeDirectionalLightBlinnPhong(FnkMaterial material,
+                                         FnkDirectionalLight light,
                                          vec3 fragPos, vec3 normal,
                                          vec2 texCoords, float shadow,
                                          float ao) {
@@ -85,7 +85,7 @@ vec3 fnk_shadeDirectionalLightBlinnPhong(QrkMaterial material,
 /** Calculate shading for a point light source using deferred data. */
 vec3 fnk_shadePointLightBlinnPhongDeferred(vec3 albedo, vec3 specular,
                                            vec3 ambient, float shininess,
-                                           QrkPointLight light, vec3 fragPos,
+                                           FnkPointLight light, vec3 fragPos,
                                            vec3 normal, float ao) {
   vec3 lightDir = normalize(light.position - fragPos);
   vec3 viewDir = normalize(-fragPos);
@@ -102,7 +102,7 @@ vec3 fnk_shadePointLightBlinnPhongDeferred(vec3 albedo, vec3 specular,
 }
 
 /** Calculate shading for a point light source. */
-vec3 fnk_shadePointLightBlinnPhong(QrkMaterial material, QrkPointLight light,
+vec3 fnk_shadePointLightBlinnPhong(FnkMaterial material, FnkPointLight light,
                                    vec3 fragPos, vec3 normal, vec2 texCoords,
                                    float ao) {
   vec3 albedo = fnk_extractAlbedo(material, texCoords);
@@ -115,7 +115,7 @@ vec3 fnk_shadePointLightBlinnPhong(QrkMaterial material, QrkPointLight light,
 /** Calculate shading for a spot light source using deferred data. */
 vec3 fnk_shadeSpotLightBlinnPhongDeferred(vec3 albedo, vec3 specular,
                                           vec3 ambient, float shininess,
-                                          QrkSpotLight light, vec3 fragPos,
+                                          FnkSpotLight light, vec3 fragPos,
                                           vec3 normal, float ao) {
   vec3 lightDir = normalize(light.position - fragPos);
   vec3 viewDir = normalize(-fragPos);
@@ -134,7 +134,7 @@ vec3 fnk_shadeSpotLightBlinnPhongDeferred(vec3 albedo, vec3 specular,
 }
 
 /** Calculate shading for a spot light source. */
-vec3 fnk_shadeSpotLightBlinnPhong(QrkMaterial material, QrkSpotLight light,
+vec3 fnk_shadeSpotLightBlinnPhong(FnkMaterial material, FnkSpotLight light,
                                   vec3 fragPos, vec3 normal, vec2 texCoords,
                                   float ao) {
   vec3 albedo = fnk_extractAlbedo(material, texCoords);

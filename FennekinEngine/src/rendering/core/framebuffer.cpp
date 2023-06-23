@@ -4,7 +4,7 @@
 
 Texture Attachment::asTexture() {
   if (target != EAttachmentTarget::TEXTURE) {
-    throw FramebufferException("ERROR::FRAMEBUFFER::INVALID_ATTACHMENT_TARGET");
+    LOG_CRITICAL("ERROR::FRAMEBUFFER::INVALID_ATTACHMENT_TARGET");
   }
   Texture texture;
   texture.m_id = id;
@@ -38,7 +38,7 @@ void Framebuffer::activate(int t_mipLevel, int t_cubemapFace) {
         GLenum target = GL_TEXTURE_2D;
         if (t_cubemapFace >= 0) {
           if (t_cubemapFace >= 6) {
-            throw FramebufferException(
+            LOG_CRITICAL(
                 "ERROR::FRAMEBUFFER::CUBEMAP_FACE_OUT_OF_RANGE");
           }
           target = GL_TEXTURE_CUBE_MAP_POSITIVE_X + t_cubemapFace;
@@ -50,12 +50,12 @@ void Framebuffer::activate(int t_mipLevel, int t_cubemapFace) {
         // Perform some checks.
         if (t_mipLevel != 0) {
           // Non-0 mips are only allowed for textures.
-          throw FramebufferException(
+          LOG_CRITICAL(
               "ERROR::FRAMEBUFFER::MIP_ACTIVATED_FOR_RENDERBUFFER");
         }
         if (t_cubemapFace >= 0) {
           // Renderbuffers currently can't be cubemaps.
-          throw FramebufferException(
+          LOG_CRITICAL(
               "ERROR::FRAMEBUFFER::CUBEMAP_FACE_GIVEN_FOR_RENDERBUFFER");
         }
         break;
@@ -75,7 +75,7 @@ ImageSize Framebuffer::getSize() {
 
 Attachment Framebuffer::attachTexture(EBufferType t_type) {
   TextureParams params = {.filtering = ETextureFiltering::BILINEAR,
-                          .wrapMode = TextureWrapMode::CLAMP_TO_EDGE};
+                          .wrapMode = ETextureWrapMode::CLAMP_TO_EDGE};
   return attachTexture(t_type, params);
 }
 
@@ -131,7 +131,7 @@ Attachment Framebuffer::attachTexture(EBufferType t_type,
                          /* mipmap level */ 0);
 
   if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-    throw FramebufferException("ERROR::FRAMEBUFFER::TEXTURE::INCOMPLETE");
+    LOG_CRITICAL("ERROR::FRAMEBUFFER::TEXTURE::INCOMPLETE");
   }
 
   updateFlags(t_type);
@@ -175,7 +175,7 @@ Attachment Framebuffer::attachRenderbuffer(EBufferType t_type) {
                             rbo);
 
   if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-    throw FramebufferException("ERROR::FRAMEBUFFER::RENDER_BUFFER::INCOMPLETE");
+    LOG_CRITICAL("ERROR::FRAMEBUFFER::RENDER_BUFFER::INCOMPLETE");
   }
 
   updateFlags(t_type);
@@ -236,7 +236,7 @@ Attachment Framebuffer::getAttachment(EAttachmentTarget t_target,
       return attachment;
     }
   }
-  throw FramebufferException("ERROR::FRAMEBUFFER::ATTACHMENT_NOT_FOUND");
+  LOG_CRITICAL("ERROR::FRAMEBUFFER::ATTACHMENT_NOT_FOUND");
 }
 
 void Framebuffer::checkFlags(EBufferType t_type) {
@@ -254,21 +254,21 @@ void Framebuffer::checkFlags(EBufferType t_type) {
       return;
     case EBufferType::DEPTH:
       if (m_hasDepthAttachment) {
-        throw FramebufferException(
+        LOG_CRITICAL(
             "ERROR::FRAMEBUFFER::BUFFER_TYPE_ALREADY_IN_USE\n" +
             std::to_string(static_cast<int>(t_type)));
       }
       return;
     case EBufferType::STENCIL:
       if (m_hasStencilAttachment) {
-        throw FramebufferException(
+        LOG_CRITICAL(
             "ERROR::FRAMEBUFFER::BUFFER_TYPE_ALREADY_IN_USE\n" +
             std::to_string(static_cast<int>(t_type)));
       }
       return;
     case EBufferType::DEPTH_AND_STENCIL:
       if (m_hasDepthAttachment || m_hasStencilAttachment) {
-        throw FramebufferException(
+        LOG_CRITICAL(
             "ERROR::FRAMEBUFFER::BUFFER_TYPE_ALREADY_IN_USE\n" +
             std::to_string(static_cast<int>(t_type)));
       }
@@ -301,7 +301,7 @@ void Framebuffer::updateFlags(EBufferType t_type) {
       m_hasStencilAttachment = true;
       return;
   }
-  throw FramebufferException("ERROR::FRAMEBUFFER::INVALID_BUFFER_TYPE\n" +
+  LOG_CRITICAL("ERROR::FRAMEBUFFER::INVALID_BUFFER_TYPE\n" +
                              std::to_string(static_cast<int>(t_type)));
 }
 

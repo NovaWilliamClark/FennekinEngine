@@ -54,7 +54,7 @@ GGXPrefilteredEnvMapCalculator::GGXPrefilteredEnvMapCalculator(int t_width, int 
         // Need trilinear filtering in order to make use of mip levels.
         .filtering = ETextureFiltering::TRILINEAR,
         // Clamp to the edge so we don't oversample.
-        .wrapMode = TextureWrapMode::CLAMP_TO_EDGE,
+        .wrapMode = ETextureWrapMode::CLAMP_TO_EDGE,
         // Force mip generation. We can optionally just use a smaller part of the
         // mip chain.
         .generateMips = EMipGeneration::ALWAYS,

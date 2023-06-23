@@ -8,9 +8,6 @@
 
 #include <glm/glm.hpp>
 
-class DeferredShadingException final : public QuarkException {
-  using QuarkException::QuarkException;
-};
 
 class DeferredGeometryPassShader : public Shader {
  public:

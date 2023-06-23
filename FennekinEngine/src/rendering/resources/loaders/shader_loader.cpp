@@ -8,73 +8,73 @@
 #include <regex>
 #include <sstream>
 
-std::string readFile(std::string const& path) {
+std::string readFile(std::string const& t_path) {
   std::ifstream file;
   file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
 
-  file.open(path.c_str());
+  file.open(t_path.c_str());
   std::stringstream buffer;
   buffer << file.rdbuf();
   return buffer.str();
 }
 
-void ShaderLoader::checkShaderType(std::string const& shaderPath) {
+void ShaderLoader::checkShaderType(std::string const& t_shaderPath) const {
   // Allow ".glsl" as a generic shader suffix (e.g. for type-agnostic shader
   // code).
-  if (string_has_suffix(shaderPath, ".glsl")) return;
+  if (stringHasSuffix(t_shaderPath, ".glsl")) return;
 
   switch (m_shaderType) {
-    case ShaderType::VERTEX:
-      if (!string_has_suffix(shaderPath, ".vert")) {
+    case EShaderType::VERTEX:
+      if (!stringHasSuffix(t_shaderPath, ".vert")) {
         LOG_CRITICAL(
             "ERROR::SHADER_LOADER::INVALID_EXTENSION\n"
             "Loaded vertex shader '" +
-            shaderPath + "' must end in '.vert'.");
+            t_shaderPath + "' must end in '.vert'.");
       }
       break;
-    case ShaderType::FRAGMENT:
-      if (!string_has_suffix(shaderPath, ".frag")) {
+    case EShaderType::FRAGMENT:
+      if (!stringHasSuffix(t_shaderPath, ".frag")) {
         LOG_CRITICAL(
             "ERROR::SHADER_LOADER::INVALID_EXTENSION\n"
             "Loaded fragment shader '" +
-            shaderPath + "' must end in '.frag'.");
+            t_shaderPath + "' must end in '.frag'.");
       }
       break;
-    case ShaderType::GEOMETRY:
-      if (!string_has_suffix(shaderPath, ".geom")) {
+    case EShaderType::GEOMETRY:
+      if (!stringHasSuffix(t_shaderPath, ".geom")) {
         LOG_CRITICAL(
             "ERROR::SHADER_LOADER::INVALID_EXTENSION\n"
             "Loaded geometry shader '" +
-            shaderPath + "' must end in '.geom'.");
+            t_shaderPath + "' must end in '.geom'.");
       }
       break;
-    case ShaderType::COMPUTE:
-      if (!string_has_suffix(shaderPath, ".comp")) {
+    case EShaderType::COMPUTE:
+      if (!stringHasSuffix(t_shaderPath, ".comp")) {
         LOG_CRITICAL(
             "ERROR::SHADER_LOADER::INVALID_EXTENSION\n"
             "Loaded compute shader '" +
-            shaderPath + "' must end in '.comp'.");
+            t_shaderPath + "' must end in '.comp'.");
       }
       break;
   }
 }
 
-bool ShaderLoader::alreadyLoadedOnce(std::string const& shaderPath) {
-  std::string resolvedPath = resolvePath(shaderPath);
-  auto item = m_onceCache.find(resolvedPath);
+bool ShaderLoader::alreadyLoadedOnce(std::string const& t_shaderPath) {
+  const std::string resolvedPath = resolvePath(t_shaderPath);
+  const auto item = m_onceCache.find(resolvedPath);
   return item != m_onceCache.end();
 }
 
-std::string ShaderLoader::getIncludesTraceback() {
+std::string ShaderLoader::getIncludesTraceback() const {
   std::stringstream buffer;
-  for (std::string path : m_includeChain) {
+  for (const std::string& path : m_includeChain) {
     buffer << "  > " << path << std::endl;
   }
   return buffer.str();
 }
 
-bool ShaderLoader::checkCircularInclude(std::string const& t_resolvedPath) {
-  for (std::string path : m_includeChain) {
+bool ShaderLoader::checkCircularInclude(std::string const& t_resolvedPath) const {
+  for (const std::string& path : m_includeChain) {
     if (path == t_resolvedPath) {
       return true;
     }
@@ -83,13 +83,13 @@ bool ShaderLoader::checkCircularInclude(std::string const& t_resolvedPath) {
 }
 
 ShaderLoader::ShaderLoader(const ShaderSource* shaderSource,
-                           const ShaderType type)
+                           const EShaderType type)
     : m_shaderSource(shaderSource), m_shaderType(type) {}
 
 std::string ShaderLoader::lookupOrLoad(std::string const& t_shaderPath) {
-  std::string resolvedPath = resolvePath(t_shaderPath);
+  const std::string resolvedPath = resolvePath(t_shaderPath);
 
-  auto item = m_codeCache.find(resolvedPath);
+  const auto item = m_codeCache.find(resolvedPath);
   if (item != m_codeCache.end()) {
     // Cache hit; return code.
     return item->second;
@@ -99,8 +99,8 @@ std::string ShaderLoader::lookupOrLoad(std::string const& t_shaderPath) {
   std::string shaderCode;
   try {
     shaderCode = readFile(t_shaderPath);
-  } catch (std::ifstream::failure& e) {
-    std::string traceback = getIncludesTraceback();
+  } catch (std::ifstream::failure& exception) {
+    const std::string traceback = getIncludesTraceback();
     LOG_CRITICAL(
         "ERROR::SHADER_LOADER::FILE_NOT_SUCCESSFULLY_READ\n"
         "Unable to read shader '" +
@@ -119,35 +119,35 @@ std::string ShaderLoader::load(std::string const& t_shaderPath) {
     return "";
   }
 
-  auto shaderCode = lookupOrLoad(t_shaderPath);
+  const auto shaderCode = lookupOrLoad(t_shaderPath);
   auto processedCode = preprocessShader(t_shaderPath, shaderCode);
   cacheShaderCode(t_shaderPath, processedCode);
   return processedCode;
 }
 
-void ShaderLoader::cacheShaderCode(std::string const& shaderPath,
+void ShaderLoader::cacheShaderCode(std::string const& t_shaderPath,
                                    std::string const& t_shaderCode) {
-  std::string resolvedPath = resolvePath(shaderPath);
+  const std::string resolvedPath = resolvePath(t_shaderPath);
   m_codeCache[resolvedPath] = t_shaderCode;
 }
 
 std::string ShaderLoader::preprocessShader(std::string const& t_shaderPath,
                                            std::string const& t_shaderCode) {
-  std::string resolvedPath = resolvePath(t_shaderPath);
+  const std::string resolvedPath = resolvePath(t_shaderPath);
   m_includeChain.push_back(resolvedPath);
 
-  std::regex oncePattern(R"(((^|\r?\n)\s*)#pragma\s+once\s*(?=\r?\n|$))");
+  const std::regex oncePattern(R"(((^|\r?\n)\s*)#pragma\s+once\s*(?=\r?\n|$))");
   if (std::regex_search(t_shaderCode, oncePattern)) {
     m_onceCache.insert(resolvedPath);
   }
 
-  std::regex includePattern(
+  const std::regex includePattern(
       R"(((^|\r?\n)\s*)#pragma\s+fnk_include\s+(".*"|<.*>)(?=\r?\n|$))");
   std::string processedCode = regexReplace(
-      t_shaderCode, includePattern, [this, t_shaderPath](const std::smatch& m) {
-          const std::string whitespace = m[1];
+      t_shaderCode, includePattern, [this, t_shaderPath](const std::smatch& t_m) {
+          const std::string whitespace = t_m[1];
         // Extract the path.
-        const std::string incl = m[3];
+        const std::string incl = t_m[3];
         const char inclType = incl[0];
         const std::string path = trim(incl.substr(1, incl.size() - 2));
 
@@ -156,7 +156,7 @@ std::string ShaderLoader::preprocessShader(std::string const& t_shaderPath,
           return whitespace + load("content/shaders/" + path);
         } else {
           // Standard include.
-          const size_t i = t_shaderPath.find_last_of("/");
+          const size_t i = t_shaderPath.find_last_of('/');
           // This will either be the current shader's directory, or empty
           // string if the current shader is at project root.
           const std::string prefix =

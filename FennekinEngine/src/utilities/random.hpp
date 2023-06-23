@@ -5,7 +5,7 @@
 // A random generator for generating pseudorandom seeds.
 class SeedGenerator {
  public:
-  explicit SeedGenerator(unsigned int seed) : m_gen(seed) {}
+  explicit SeedGenerator(const unsigned int t_seed) : m_gen(t_seed) {}
 
   // Returns the next sampled seed.
   unsigned int next() { return m_gen(); }
@@ -21,8 +21,8 @@ class SeedGenerator {
 // [0.0, 1.0).
 class UniformRandom {
  public:
-  explicit UniformRandom(unsigned int seed)
-      : m_gen(seed), m_rand(0.0f, 1.0f), m_seed(seed) {}
+  explicit UniformRandom(const unsigned int t_seed)
+      : m_gen(t_seed), m_rand(0.0f, 1.0f), m_seed(t_seed) {}
   UniformRandom() : UniformRandom(SeedGenerator::generateTrueRandomSeed()) {}
 
   // Returns the next sampled random number.

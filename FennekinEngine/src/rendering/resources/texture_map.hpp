@@ -7,9 +7,6 @@
 #include <string>
 #include <vector>
 
-class TextureMapException final : public QuarkException {
-  using QuarkException::QuarkException;
-};
 
 // The type of map, i.e. how the underlying texture is meant to be used.
 enum class ETextureMapType {
@@ -56,7 +53,7 @@ inline std::vector<aiTextureType> textureMapTypeToAiTextureTypes(
     case ETextureMapType::NORMAL:
       return {aiTextureType_NORMALS};
     default:
-      throw TextureMapException(
+      LOG_CRITICAL(
           "ERROR::TEXTURE_MAP::INVALID_TEXTURE_MAP_TYPE\n" +
           std::to_string(static_cast<int>(type)));
   }

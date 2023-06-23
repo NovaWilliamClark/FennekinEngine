@@ -8,9 +8,7 @@
 #include <string>
 #include <vector>
 
-class FramebufferException final : public QuarkException {
-  using QuarkException::QuarkException;
-};
+#include "core/debug/logger.hpp"
 
 enum class EAttachmentTarget {
   TEXTURE,
@@ -72,8 +70,7 @@ inline GLenum bufferTypeToGlAttachmentType(EBufferType t_type, const int attachm
     case EBufferType::DEPTH_AND_STENCIL:
       return GL_DEPTH_STENCIL_ATTACHMENT;
   }
-  throw FramebufferException("ERROR::FRAMEBUFFER::INVALID_BUFFER_TYPE\n" +
-                             std::to_string(static_cast<int>(t_type)));
+    LOG_CRITICAL("Invalid Buffer Type");
 }
 
 inline GLenum bufferTypeToGlInternalFormat(EBufferType t_type) {
@@ -101,8 +98,7 @@ inline GLenum bufferTypeToGlInternalFormat(EBufferType t_type) {
     case EBufferType::DEPTH_AND_STENCIL:
       return GL_DEPTH24_STENCIL8;
   }
-  throw FramebufferException("ERROR::FRAMEBUFFER::INVALID_BUFFER_TYPE\n" +
-                             std::to_string(static_cast<int>(t_type)));
+    LOG_CRITICAL("Invalid Buffer Type");
 }
 
 inline GLenum bufferTypeToGlFormat(EBufferType t_type) {
@@ -126,8 +122,7 @@ inline GLenum bufferTypeToGlFormat(EBufferType t_type) {
     case EBufferType::DEPTH_AND_STENCIL:
       return GL_DEPTH_STENCIL;
   }
-  throw FramebufferException("ERROR::FRAMEBUFFER::INVALID_BUFFER_TYPE\n" +
-                             std::to_string(static_cast<int>(t_type)));
+    LOG_CRITICAL("Invalid Buffer Type");
 }
 
 inline GLenum bufferTypeToGlDataType(EBufferType t_type) {
@@ -151,8 +146,7 @@ inline GLenum bufferTypeToGlDataType(EBufferType t_type) {
     case EBufferType::DEPTH_AND_STENCIL:
       return GL_UNSIGNED_INT_24_8;
   }
-  throw FramebufferException("ERROR::FRAMEBUFFER::INVALID_BUFFER_TYPE\n" +
-                             std::to_string(static_cast<int>(t_type)));
+    LOG_CRITICAL("Invalid Buffer Type");
 }
 
 // Represents a generated framebuffer

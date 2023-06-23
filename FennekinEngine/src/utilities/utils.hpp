@@ -10,57 +10,57 @@
 #include <string>
 
 
-static inline float lerp(float a, float b, float weight) {
-  return a + weight * (b - a);
+static inline float lerp(const float t_a, const float t_b, const float t_weight) {
+  return t_a + t_weight * (t_b - t_a);
 }
 
-static inline std::string ltrim(std::string s) {
-  s.erase(s.begin(), std::find_if(s.begin(), s.end(),
-                                  [](int ch) { return !std::isspace(ch); }));
-  return s;
+static inline std::string lTrim(std::string t_s) {
+  t_s.erase(t_s.begin(), std::ranges::find_if(t_s,
+                                          [](const int t_ch) { return !std::isspace(t_ch); }));
+  return t_s;
 }
 
-static inline std::string rtrim(std::string s) {
-  s.erase(std::find_if(s.rbegin(), s.rend(),
-                       [](int ch) { return !std::isspace(ch); })
+static inline std::string rtrim(std::string t_s) {
+  t_s.erase(std::find_if(t_s.rbegin(), t_s.rend(),
+                       [](const int t_ch) { return !std::isspace(t_ch); })
               .base(),
-          s.end());
-  return s;
+          t_s.end());
+  return t_s;
 }
 
-static inline std::string trim(std::string s) { return ltrim(rtrim(s)); }
+static inline std::string trim(const std::string& t_s) { return lTrim(rtrim(t_s)); }
 
-static inline bool string_has_suffix(const std::string& str,
-                                     const std::string& suffix) {
-  return str.size() >= suffix.size() &&
-         str.compare(str.size() - suffix.size(), suffix.size(), suffix) == 0;
+static inline bool stringHasSuffix(const std::string& t_str,
+                                     const std::string& t_suffix) {
+  return t_str.size() >= t_suffix.size() &&
+         t_str.compare(t_str.size() - t_suffix.size(), t_suffix.size(), t_suffix) == 0;
 }
 
-static inline std::string resolvePath(const std::string& path) {
-	std::filesystem::path absolutePath = std::filesystem::absolute(path);
+static inline std::string resolvePath(const std::string& t_path) {
+  const std::filesystem::path absolutePath = std::filesystem::absolute(t_path);
 	return absolutePath.string();
 }
 
-template <class BidirIt, class Traits, class CharT, class UnaryFunction>
-std::basic_string<CharT> regexReplace(BidirIt first, BidirIt last,
-                                      const std::basic_regex<CharT, Traits>& re,
-                                      UnaryFunction f) {
-  std::basic_string<CharT> s;
+template <class TBiDirIt, class TTraits, class TCharT, class TUnaryFunction>
+std::basic_string<TCharT> regexReplace(TBiDirIt t_first, TBiDirIt t_last,
+                                      const std::basic_regex<TCharT, TTraits>& t_re,
+                                      TUnaryFunction t_f) {
+  std::basic_string<TCharT> s;
 
-  typename std::match_results<BidirIt>::difference_type positionOfLastMatch = 0;
-  auto endOfLastMatch = first;
+  typename std::match_results<TBiDirIt>::difference_type positionOfLastMatch = 0;
+  auto endOfLastMatch = t_first;
 
-  auto callback = [&](const std::match_results<BidirIt>& match) {
-    auto positionOfThisMatch = match.position(0);
+  auto callback = [&](const std::match_results<TBiDirIt>& t_match) {
+    auto positionOfThisMatch = t_match.position(0);
     auto diff = positionOfThisMatch - positionOfLastMatch;
 
     auto startOfThisMatch = endOfLastMatch;
     std::advance(startOfThisMatch, diff);
 
     s.append(endOfLastMatch, startOfThisMatch);
-    s.append(f(match));
+    s.append(t_f(t_match));
 
-    auto lengthOfMatch = match.length(0);
+    auto lengthOfMatch = t_match.length(0);
 
     positionOfLastMatch = positionOfThisMatch + lengthOfMatch;
 
@@ -68,17 +68,17 @@ std::basic_string<CharT> regexReplace(BidirIt first, BidirIt last,
     std::advance(endOfLastMatch, lengthOfMatch);
   };
 
-  std::sregex_iterator begin(first, last, re), end;
+  std::sregex_iterator begin(t_first, t_last, t_re), end;
   std::for_each(begin, end, callback);
 
-  s.append(endOfLastMatch, last);
+  s.append(endOfLastMatch, t_last);
 
   return s;
 }
 
-template <class Traits, class CharT, class UnaryFunction>
-std::string regexReplace(const std::string& s,
-                         const std::basic_regex<CharT, Traits>& re,
-                         UnaryFunction f) {
-  return regexReplace(s.cbegin(), s.cend(), re, f);
+template <class TTraits, class TCharT, class TUnaryFunction>
+std::string regexReplace(const std::string& t_s,
+                         const std::basic_regex<TCharT, TTraits>& t_re,
+                         TUnaryFunction t_f) {
+  return regexReplace(t_s.cbegin(), t_s.cend(), t_re, t_f);
 }

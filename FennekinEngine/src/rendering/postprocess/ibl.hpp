@@ -7,9 +7,6 @@
 #include "rendering/resources/shader_primitives.hpp"
 #include "scene/mesh_primitives.hpp"
 
-class IblException final : public QuarkException {
-    using QuarkException::QuarkException;
-};
 
 class CubemapIrradianceShader final : public Shader {
 public:

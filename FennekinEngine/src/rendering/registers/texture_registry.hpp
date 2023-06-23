@@ -7,9 +7,6 @@
 #include <string>
 #include <vector>
 
-class TextureRegistryException : public QuarkException {
-  using QuarkException::QuarkException;
-};
 
 class TextureSource {
  public:

@@ -3,20 +3,20 @@
 #pragma fnk_include < lighting.frag>
 #pragma fnk_include < pbr.frag>
 
-#ifndef fnk_MAX_DIRECTIONAL_LIGHTS
-#define fnk_MAX_DIRECTIONAL_LIGHTS 10
+#ifndef FNK_MAX_DIRECTIONAL_LIGHTS
+#define FNK_MAX_DIRECTIONAL_LIGHTS 10
 #endif
-uniform QrkDirectionalLight fnk_directionalLights[fnk_MAX_DIRECTIONAL_LIGHTS];
+uniform FnkDirectionalLight fnk_directionalLights[FNK_MAX_DIRECTIONAL_LIGHTS];
 uniform int fnk_directionalLightCount;
 
-#ifndef fnk_MAX_POINT_LIGHTS
-#define fnk_MAX_POINT_LIGHTS 10
+#ifndef FNK_MAX_POINT_LIGHTS
+#define FNK_MAX_POINT_LIGHTS 10
 #endif
-uniform QrkPointLight fnk_pointLights[fnk_MAX_POINT_LIGHTS];
+uniform FnkPointLight fnk_pointLights[FNK_MAX_POINT_LIGHTS];
 uniform int fnk_pointLightCount;
 
-#ifndef fnk_MAX_SPOT_LIGHTS
-#define fnk_MAX_SPOT_LIGHTS 10
+#ifndef FNK_MAX_SPOT_LIGHTS
+#define FNK_MAX_SPOT_LIGHTS 10
 #endif
-uniform QrkSpotLight fnk_spotLights[fnk_MAX_SPOT_LIGHTS];
+uniform FnkSpotLight fnk_spotLights[FNK_MAX_SPOT_LIGHTS];
 uniform int fnk_spotLightCount;

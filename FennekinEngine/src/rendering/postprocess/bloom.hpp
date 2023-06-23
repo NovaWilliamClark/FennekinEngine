@@ -7,9 +7,6 @@
 
 #include "rendering/resources/shader_primitives.hpp"
 
-class BloomException : public QuarkException {
-  using QuarkException::QuarkException;
-};
 
 class BloomBuffer : public Framebuffer, public TextureSource {
  public:

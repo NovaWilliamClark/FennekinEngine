@@ -12,7 +12,7 @@
  * shadow (or lack thereof, if shadow maps aren't enabled for it). This only
  * works when there's 1 light.
  */
-vec3 fnk_shadeAllDirectionalLightsCookTorranceGGX(QrkMaterial material,
+vec3 fnk_shadeAllDirectionalLightsCookTorranceGGX(FnkMaterial material,
                                                   vec3 fragPos, vec3 normal,
                                                   vec2 texCoords,
                                                   float shadow) {
@@ -38,7 +38,7 @@ vec3 fnk_shadeAllDirectionalLightsCookTorranceGGXDeferred(
 }
 
 /** Calculate shading from all active point lights. */
-vec3 fnk_shadeAllPointLightsCookTorranceGGX(QrkMaterial material, vec3 fragPos,
+vec3 fnk_shadeAllPointLightsCookTorranceGGX(FnkMaterial material, vec3 fragPos,
                                             vec3 normal, vec2 texCoords) {
   vec3 result = vec3(0.0);
   for (int i = 0; i < fnk_pointLightCount; i++) {
@@ -62,7 +62,7 @@ vec3 fnk_shadeAllPointLightsCookTorranceGGXDeferred(vec3 albedo,
 }
 
 /** Calculate shading from all active spot lights. */
-vec3 fnk_shadeAllSpotLightsCookTorranceGGX(QrkMaterial material, vec3 fragPos,
+vec3 fnk_shadeAllSpotLightsCookTorranceGGX(FnkMaterial material, vec3 fragPos,
                                            vec3 normal, vec2 texCoords) {
   vec3 result = vec3(0.0);
   for (int i = 0; i < fnk_spotLightCount; i++) {
@@ -88,7 +88,7 @@ vec3 fnk_shadeAllSpotLightsCookTorranceGGXDeferred(vec3 albedo, float roughness,
  * Calculate shading from all light sources, except ambient and emission
  * textures.
  */
-vec3 fnk_shadeAllLightsCookTorranceGGX(QrkMaterial material, vec3 fragPos,
+vec3 fnk_shadeAllLightsCookTorranceGGX(FnkMaterial material, vec3 fragPos,
                                        vec3 normal, vec2 texCoords,
                                        float shadow) {
   vec3 albedo = fnk_extractAlbedo(material, texCoords);
@@ -102,7 +102,7 @@ vec3 fnk_shadeAllLightsCookTorranceGGX(QrkMaterial material, vec3 fragPos,
   return directional + point + spot;
 }
 
-vec3 fnk_shadeAllLightsCookTorranceGGX(QrkMaterial material, vec3 fragPos,
+vec3 fnk_shadeAllLightsCookTorranceGGX(FnkMaterial material, vec3 fragPos,
                                        vec3 normal, vec2 texCoords) {
   return fnk_shadeAllLightsCookTorranceGGX(material, fragPos, normal, texCoords,
                                            /*shadow=*/0.0);
