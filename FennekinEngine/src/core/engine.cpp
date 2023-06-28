@@ -3,7 +3,7 @@
 #include "core/gui.hpp"
 
 
-Engine::Engine() : m_window(1920, 1080, "Model Render", false, 4) {
+Engine::Engine() : m_window(1920, 1080, "Model Render - William Clark", true, 4) {
 }
 
 Engine::~Engine() = default;
