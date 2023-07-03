@@ -27,5 +27,5 @@ An OpenGL model renderer. WIP currently learning about shaders and 3D rendering 
   - ImGui debug menu
 
 
-## Test
+## Test Demo
 ![Alt Text](./Docs/PBR_Model_Diffuse_Lighting_Test.gif)
