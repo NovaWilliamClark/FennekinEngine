@@ -29,3 +29,11 @@ An OpenGL model renderer. WIP currently learning about shaders and 3D rendering 
 
 ## Test Demo
 ![Alt Text](./Docs/PBR_Model_Diffuse_Lighting_Test.gif)
+
+
+## TODO:
+- Scene Loading Via JSON
+- Scene Switching
+- Model Switching
+- Move SSAO to GBuffer Viusalization rather than in the debug menu
+- Code Clean Up
